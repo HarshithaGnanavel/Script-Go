@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import EditorClient from './editor-client'
 
+export const dynamic = 'force-dynamic'
+
 export default async function EditorPage({
   searchParams,
 }: {
@@ -17,18 +19,30 @@ export default async function EditorPage({
   let initialData = null
 
   // Await searchParams since it's a promise in Next.js 15+
-  const { id } = await searchParams
+  const res = await searchParams
+  const id = res?.id
+  
+  console.log('Editor Page - Script ID:', id)
 
-  if (id) {
-    const { data } = await supabase
+  if (id && id !== 'undefined') {
+    const { data, error } = await supabase
       .from('scripts')
       .select('*')
       .eq('id', id)
       .eq('user_id', user.id)
       .single()
     
-    if (data) initialData = data
+    if (error) {
+        console.error('Error fetching script:', error)
+    }
+
+    if (data) {
+        console.log('Script data found:', data.id)
+        initialData = data
+    } else {
+        console.log('No script data found for ID:', id)
+    }
   }
 
-  return <EditorClient initialData={initialData} />
+  return <EditorClient key={id || 'new'} initialData={initialData} />
 }

@@ -4,6 +4,8 @@ import { Plus, LogOut } from 'lucide-react'
 import ScriptGrid from './script-grid'
 import { redirect } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

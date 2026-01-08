@@ -53,17 +53,24 @@ export default function EditorClient({ initialData }: { initialData: any }) {
   const router = useRouter()
 
   useEffect(() => {
+    if (initialData) {
+        setContent(initialData.content || '')
+        setCurrentId(initialData.id || '')
+    }
+  }, [initialData])
+
+  useEffect(() => {
     if (state?.success && state?.content) {
       setContent(state.content)
       if (state.id) {
           setCurrentId(state.id)
           // Update URL without reload if it's a new script
-          if (!initialData?.id) {
+          if (!currentId && state.id) { // Use currentId to check if it WAS a new script
               window.history.pushState(null, '', `/editor?id=${state.id}`)
           }
       }
     }
-  }, [state, initialData])
+  }, [state, currentId])
 
   const handleCopy = async () => {
     if (!content) return
