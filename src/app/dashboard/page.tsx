@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Youtube, Linkedin, LogOut } from 'lucide-react'
+import { Plus, LogOut } from 'lucide-react'
+import ScriptGrid from './script-grid'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
@@ -72,33 +73,7 @@ export default async function DashboardPage() {
              </Link>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {scripts.map((script) => (
-              <Link key={script.id} href={`/editor?id=${script.id}`}>
-                <div className="group relative rounded-lg border border-border bg-card p-6 shadow-sm transition-all hover:border-indigo-500/50 hover:shadow-md hover:shadow-indigo-500/10 h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                        script.platform === 'YouTube' 
-                        ? 'bg-red-500/10 text-red-500 ring-red-500/20' 
-                        : 'bg-blue-500/10 text-blue-500 ring-blue-500/20'
-                    }`}>
-                      {script.platform === 'YouTube' ? <Youtube className="w-3 h-3" /> : <Linkedin className="w-3 h-3" />}
-                      {script.platform}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                        {new Date(script.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <h3 className="font-semibold leading-tight line-clamp-1 group-hover:text-indigo-400 transition-colors mb-2">
-                    {script.title}
-                  </h3>
-                   <p className="text-sm text-muted-foreground line-clamp-3">
-                      {script.content || "No content generated yet."}
-                   </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <ScriptGrid scripts={scripts} />
         )}
       </main>
     </div>
