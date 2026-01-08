@@ -5,7 +5,7 @@ import EditorClient from './editor-client'
 export default async function EditorPage({
   searchParams,
 }: {
-  searchParams: { id?: string }
+  searchParams: Promise<{ id?: string }>
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -16,11 +16,14 @@ export default async function EditorPage({
 
   let initialData = null
 
-  if (searchParams.id) {
+  // Await searchParams since it's a promise in Next.js 15+
+  const { id } = await searchParams
+
+  if (id) {
     const { data } = await supabase
       .from('scripts')
       .select('*')
-      .eq('id', searchParams.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single()
     
