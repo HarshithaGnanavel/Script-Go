@@ -19,28 +19,38 @@ export async function generateScript(prevState: any, formData: FormData) {
   const topic = formData.get('topic') as string
   const platform = formData.get('platform') as string
   const tone = formData.get('tone') as string
+  const language = formData.get('language') as string || 'English'
+  const framework = formData.get('framework') as string || 'AIDA'
+  const length = formData.get('length') as string
   const existingId = formData.get('id') as string
 
   if (!topic || !platform || !tone) {
     return { error: 'Please fill in all fields', success: false, content: '', id: '' }
   }
 
+  const frameworkDescription = framework === 'AIDA'
+    ? 'AIDA (Attention, Interest, Desire, Action)'
+    : 'PAS (Problem, Agitate, Solve)'
+
   let prompt = ''
   if (platform === 'LinkedIn') {
-    prompt = `Write a structured LinkedIn post about "${topic}".
+    prompt = `Write a structured LinkedIn post about "${topic}" in ${language}.
     Tone: ${tone}.
+    Marketing Framework: ${frameworkDescription}.
     Structure:
     - Hook (catchy opening)
-    - Short story / insight
+    - Body following the ${framework} framework
     - Clear CTA
     - Relevant hashtags`
   } else {
-    prompt = `Write a YouTube script about "${topic}".
+    prompt = `Write a YouTube script about "${topic}" in ${language}.
     Tone: ${tone}.
+    Target Length: ${length || 'Medium'}.
+    Marketing Framework: ${frameworkDescription}.
     Structure:
     - Hook
     - Intro
-    - Main points
+    - Main segments following the ${framework} framework
     - Outro + CTA`
   }
 
@@ -57,7 +67,15 @@ export async function generateScript(prevState: any, formData: FormData) {
       // Update existing
       const { error: updateError } = await supabase
         .from('scripts')
-        .update({ content, title: topic, platform, tone })
+        .update({
+          content,
+          title: topic,
+          platform,
+          tone,
+          language,
+          framework,
+          length: platform === 'YouTube' ? length : null
+        })
         .eq('id', existingId)
         .eq('user_id', user.id)
 
@@ -75,6 +93,9 @@ export async function generateScript(prevState: any, formData: FormData) {
           platform,
           tone,
           content,
+          language,
+          framework,
+          length: platform === 'YouTube' ? length : null
         })
         .select()
         .single()

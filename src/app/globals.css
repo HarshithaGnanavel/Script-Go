@@ -24,25 +24,25 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --background: 230 25% 4%;
+    --foreground: 0 0% 100%;
+    --card: 230 25% 6%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 230 25% 5%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: 245 80% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 230 20% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --muted: 230 20% 12%;
+    --muted-foreground: 230 15% 70%;
+    --accent: 245 80% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 230 20% 15%;
+    --input: 230 20% 15%;
+    --ring: 245 80% 65%;
   }
 
   * {
@@ -50,6 +50,44 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(245, 80%, 65%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(280, 80%, 65%, 0.05) 0px, transparent 50%);
+    min-height: 100vh;
   }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.08];
+  }
+  
+  .glass-card {
+    @apply bg-zinc-900/40 backdrop-blur-md border border-white/10 shadow-2xl;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent;
+  }
+
+  .glow-indigo {
+    text-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsla(230, 20%, 20%, 0.8);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(230, 20%, 30%, 0.8);
 }
