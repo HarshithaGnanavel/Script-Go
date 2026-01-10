@@ -32,33 +32,51 @@ export async function generateScript(prevState: any, formData: FormData) {
     ? 'AIDA (Attention, Interest, Desire, Action)'
     : 'PAS (Problem, Agitate, Solve)'
 
-  let prompt = ''
+  const systemPrompt = `You are a world-class content strategist and professional script writer. 
+  You specialize in creating high-conversion, viral content for social media.
+  You are fluent in multiple languages and understand cultural nuances, slang, and professional etiquette in each.
+  Your goal is to write content that sounds like it was written by a native speaker.`;
+
+  let aiPrompt = ''
   if (platform === 'LinkedIn') {
-    prompt = `Write a structured LinkedIn post about "${topic}" in ${language}.
-    Tone: ${tone}.
-    Marketing Framework: ${frameworkDescription}.
-    Structure:
-    - Hook (catchy opening)
-    - Body following the ${framework} framework
-    - Clear CTA
-    - Relevant hashtags`
+    aiPrompt = `Write a high-engaging LinkedIn post about "${topic}" entirely in the ${language} language.
+    
+    CRITICAL INSTRUCTIONS:
+    1. Use the NATIVE SCRIPT of ${language} (e.g., Devanagari for Hindi, Tamil script for Tamil). Do NOT use English transliteration.
+    2. Tone: ${tone}.
+    3. Marketing Framework: ${frameworkDescription}.
+    4. Structure:
+       - Viral Hook (Stop the scroll)
+       - Body following the ${framework} framework
+       - Clear, compelling Call to Action
+       - 3-5 relevant hashtags in ${language}
+    
+    Ensure the phrasing is natural, modern, and sounds like a native human expert in the topic.`
   } else {
-    prompt = `Write a YouTube script about "${topic}" in ${language}.
-    Tone: ${tone}.
-    Target Length: ${length || 'Medium'}.
-    Marketing Framework: ${frameworkDescription}.
-    Structure:
-    - Hook
-    - Intro
-    - Main segments following the ${framework} framework
-    - Outro + CTA`
+    aiPrompt = `Write a comprehensive YouTube script about "${topic}" entirely in the ${language} language.
+    
+    CRITICAL INSTRUCTIONS:
+    1. Use the NATIVE SCRIPT of ${language} (e.g., Devanagari for Hindi, Tamil script for Tamil). Do NOT use English transliteration.
+    2. Tone: ${tone}.
+    3. Target Duration: ${length || 'Medium'}.
+    4. Marketing Framework: ${frameworkDescription}.
+    5. Structure:
+       - High-retention Hook
+       - Engaging Intro
+       - Detailed segments following the ${framework} framework
+       - Outro + strong CTA
+    
+    Ensure the content is plausible, factually grounded, and uses authentic ${language} idioms and phrasing.`
   }
 
   try {
     const completion = await openai.chat.completions.create({
-      messages: [{ role: 'system', content: 'You are a professional script writer.' }, { role: 'user', content: prompt }],
-      model: 'gpt-3.5-turbo',
-      temperature: 0.7,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: aiPrompt }
+      ],
+      model: 'gpt-4o',
+      temperature: 0.8,
     })
 
     const content = completion.choices[0].message.content || ''
