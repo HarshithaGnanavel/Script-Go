@@ -106,7 +106,10 @@ export default function EditorClient({ initialData }: { initialData: any }) {
           </Link>
           <div className="space-y-0.5">
             <h1 className="text-xl font-bold text-white tracking-tight">Script Editor</h1>
-            <p className="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest leading-none">AI Integration</p>
+            <p className="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest leading-none flex items-center gap-2">
+              AI Integration
+              <Link href="/planner" className="ml-2 px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors">Planner</Link>
+            </p>
           </div>
         </div>
 

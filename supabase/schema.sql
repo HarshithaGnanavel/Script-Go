@@ -12,6 +12,10 @@ create table public.scripts (
   platform text not null,
   tone text not null,
   content text not null,
+  language text default 'English',
+  framework text default 'AIDA',
+  length text,
+  scheduled_date date,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

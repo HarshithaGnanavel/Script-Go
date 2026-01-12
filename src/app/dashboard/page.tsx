@@ -40,13 +40,13 @@ export default async function DashboardPage() {
              </span>
           </div>
           <div className="flex items-center gap-6">
-              <span className="text-sm text-zinc-400 font-medium hidden sm:inline-block hover:text-white transition-colors cursor-default">{user.email}</span>
-               <form action={signOut}>
-                <button className="text-sm text-zinc-400 hover:text-white transition-all flex items-center gap-2 hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent hover:border-white/10">
-                    <LogOut className="w-4 h-4" />
-                    Sign out
-                </button>
-               </form>
+            <span className="text-sm text-zinc-400 font-medium hidden sm:inline-block hover:text-white transition-colors cursor-default">{user.email}</span>
+             <form action={signOut}>
+              <button className="text-sm text-zinc-400 hover:text-white transition-all flex items-center gap-2 hover:bg-white/5 px-4 py-2 rounded-lg border border-transparent hover:border-white/10">
+                  <LogOut className="w-4 h-4" />
+                  Sign out
+              </button>
+             </form>
           </div>
         </div>
       </header>
@@ -61,13 +61,21 @@ export default async function DashboardPage() {
               Create, manage and refine your AI-powered scripts for social growth.
             </p>
           </div>
-           <Link href="/editor">
-            <button className="group relative inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-2xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all hover:-translate-y-0.5 active:translate-y-0">
-              <Plus className="h-5 w-5" />
-              Create New Script
-              <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-            </button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/planner">
+              <button className="group relative inline-flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10 hover:-translate-y-0.5 active:translate-y-0">
+                <Sparkles className="h-5 w-5 text-indigo-400" />
+                Plan Multi-Day Content
+              </button>
+            </Link>
+             <Link href="/editor">
+              <button className="group relative inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-2xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                <Plus className="h-5 w-5" />
+                Create New Script
+                <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+              </button>
+            </Link>
+          </div>
         </div>
 
         {!scripts || scripts.length === 0 ? (
@@ -89,7 +97,31 @@ export default async function DashboardPage() {
              </Link>
           </div>
         ) : (
-          <ScriptGrid scripts={scripts} />
+          <div className="space-y-16">
+            {/* One-off / Individual Scripts */}
+            {scripts.filter(s => !s.scheduled_date).length > 0 && (
+              <section className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-1 bg-white/5" />
+                  <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-zinc-500">Individual Scripts</h2>
+                  <div className="h-px flex-1 bg-white/5" />
+                </div>
+                <ScriptGrid scripts={scripts.filter(s => !s.scheduled_date)} />
+              </section>
+            )}
+
+            {/* Planned / Multi-day Scripts */}
+            {scripts.filter(s => s.scheduled_date).length > 0 && (
+              <section className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-1 bg-white/5" />
+                  <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-indigo-500/70">Planned Campaigns</h2>
+                  <div className="h-px flex-1 bg-white/5" />
+                </div>
+                <ScriptGrid scripts={scripts.filter(s => s.scheduled_date)} />
+              </section>
+            )}
+          </div>
         )}
       </main>
     </div>

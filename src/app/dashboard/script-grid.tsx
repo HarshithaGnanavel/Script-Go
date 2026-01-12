@@ -14,6 +14,7 @@ type Script = {
   language?: string
   framework?: string
   length?: string
+  scheduled_date?: string
   created_at: string
   user_id: string
 }
@@ -38,7 +39,7 @@ export default function ScriptGrid({ scripts }: { scripts: Script[] }) {
 
   // Format date helper
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -66,7 +67,9 @@ export default function ScriptGrid({ scripts }: { scripts: Script[] }) {
                 {script.platform}
               </span>
               <span className="text-[11px] font-medium text-zinc-500">
-                {new Date(script.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                {script.scheduled_date 
+                  ? `Scheduled: ${new Date(script.scheduled_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                  : new Date(script.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </span>
             </div>
             <h3 className="font-bold text-lg text-white mb-3 line-clamp-1 group-hover:text-indigo-400 transition-colors relative">
