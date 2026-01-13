@@ -20,29 +20,34 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  
+  --color-brand-indigo: #6366f1;
+  --color-brand-indigo-light: #818cf8;
+  --color-brand-indigo-dark: #4f46e5;
+  --color-brand-slate: #0f172a;
 }
 
 @layer base {
   :root {
-    --background: 230 25% 4%;
-    --foreground: 0 0% 100%;
-    --card: 230 25% 6%;
-    --card-foreground: 0 0% 98%;
-    --popover: 230 25% 5%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 245 80% 65%;
+    --background: 222 47% 4%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 95%;
+    --popover: 222 47% 5%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 226 70% 60%; /* Indigo */
     --primary-foreground: 0 0% 100%;
-    --secondary: 230 20% 12%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 230 20% 12%;
-    --muted-foreground: 230 15% 70%;
-    --accent: 245 80% 65%;
-    --accent-foreground: 0 0% 100%;
+    --secondary: 222 47% 12%;
+    --secondary-foreground: 210 40% 95%;
+    --muted: 222 47% 15%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 226 70% 50%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 230 20% 15%;
-    --input: 230 20% 15%;
-    --ring: 245 80% 65%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 226 70% 60%;
   }
 
   * {
@@ -51,32 +56,61 @@
   body {
     @apply bg-background text-foreground antialiased;
     background-image: 
-      radial-gradient(at 0% 0%, hsla(245, 80%, 65%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(280, 80%, 65%, 0.05) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, hsla(226, 70%, 60%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(260, 70%, 50%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, hsla(226, 70%, 60%, 0.03) 0px, transparent 50%);
     min-height: 100vh;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.08];
+    @apply bg-white/[0.01] backdrop-blur-2xl border border-white/[0.04];
   }
   
   .glass-card {
-    @apply bg-zinc-900/40 backdrop-blur-md border border-white/10 shadow-2xl;
+    @apply bg-zinc-950/20 backdrop-blur-xl border border-white/[0.06] shadow-2xl transition-all duration-300;
+  }
+
+  .premium-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(2, 6, 23, 0.6) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
   }
 
   .text-gradient {
-    @apply bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent;
+    background: linear-gradient(to bottom right, #ffffff, #94a3b8, #64748b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-brand {
+    background: linear-gradient(to bottom right, #818cf8, #6366f1, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .glow-indigo {
-    text-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+  }
+  
+  .brand-border {
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  .btn-gradient {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    @apply text-white shadow-lg shadow-indigo-500/25 transition-all duration-300;
+  }
+
+  .btn-gradient:hover {
+    @apply shadow-indigo-500/40 -translate-y-0.5;
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
   }
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -84,10 +118,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsla(230, 20%, 20%, 0.8);
+  background: hsla(226, 70%, 60%, 0.1);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsla(230, 20%, 30%, 0.8);
+  background: hsla(226, 70%, 60%, 0.2);
 }
