@@ -1,27 +1,27 @@
 'use client'
 
 import { useActionState, useState, useEffect } from 'react'
-import { requestPasswordReset } from '@/app/login/actions'
-import { Key, Sparkles, CheckCircle2, AlertCircle, Loader2, Mail } from 'lucide-react'
+import { requestPasswordReset, ActionState } from '@/app/login/actions'
+import { CheckCircle2, AlertCircle, Loader2, Mail } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function ProfileClient({ email }: { email: string }) {
   const [state, formAction, isPending] = useActionState(
-    (async (state: any, formData: FormData) => {
-        return await requestPasswordReset(state, formData)
-    }) as any,
-    { error: null, success: null }
+    async (prevState: ActionState, formData: FormData) => {
+        return await requestPasswordReset(prevState, formData)
+    },
+    null
   )
 
   const [showToast, setShowToast] = useState(false)
 
   useEffect(() => {
-    if (state.success || state.error) {
+    if (state?.success || state?.error) {
       setShowToast(true)
       const timer = setTimeout(() => setShowToast(false), 5000)
       return () => clearTimeout(timer)
     }
-  }, [state.success, state.error])
+  }, [state])
 
   return (
     <div className="relative">
@@ -43,7 +43,7 @@ export default function ProfileClient({ email }: { email: string }) {
       </form>
 
       <AnimatePresence>
-        {showToast && (state.success || state.error) && (
+        {showToast && state && (state.success || state.error) && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

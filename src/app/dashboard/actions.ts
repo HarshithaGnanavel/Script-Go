@@ -54,8 +54,9 @@ export async function sendSelectedScripts(ids: string[]) {
       await sendScriptEmail(user.email, script.title, script.content)
     }
     return { success: true }
-  } catch (err: any) {
-    return { error: err.message || 'Failed to send emails' }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to send emails'
+    return { error: message }
   }
 }
 

@@ -5,7 +5,12 @@ import { redirect } from 'next/navigation'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendWelcomeEmail, sendPasswordResetEmail, sendLoginEmail } from '@/lib/email'
 
-export async function login(prevState: any, formData: FormData) {
+export type ActionState = {
+  error?: string
+  success?: string
+} | null
+
+export async function login(prevState: ActionState, formData: FormData) {
   const supabase = await createClient()
 
   const data = {
@@ -25,7 +30,7 @@ export async function login(prevState: any, formData: FormData) {
   redirect('/dashboard')
 }
 
-export async function signup(prevState: any, formData: FormData) {
+export async function signup(prevState: ActionState, formData: FormData) {
   const supabase = await createClient()
 
   const email = (formData.get('email') as string || '').trim()
@@ -71,7 +76,7 @@ export async function signup(prevState: any, formData: FormData) {
   redirect('/dashboard')
 }
 
-export async function requestPasswordReset(prevState: any, formData: FormData) {
+export async function requestPasswordReset(prevState: ActionState, formData: FormData) {
   const adminSupabase = await createAdminClient()
   const email = (formData.get('email') as string || '').trim()
 
@@ -102,7 +107,7 @@ export async function requestPasswordReset(prevState: any, formData: FormData) {
   return { success: 'Check your email for the reset link.' }
 }
 
-export async function updatePassword(prevState: any, formData: FormData) {
+export async function updatePassword(prevState: ActionState, formData: FormData) {
   const supabase = await createClient()
   const password = (formData.get('password') as string || '').trim()
 
@@ -119,7 +124,7 @@ export async function updatePassword(prevState: any, formData: FormData) {
   return { success: 'Password updated successfully. You can now sign in.' }
 }
 
-export async function changePassword(prevState: any, formData: FormData) {
+export async function changePassword(prevState: ActionState, formData: FormData) {
   const supabase = await createClient()
   const currentPassword = (formData.get('currentPassword') as string || '').trim()
   const newPassword = (formData.get('newPassword') as string || '').trim()

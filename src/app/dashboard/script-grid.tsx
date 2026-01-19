@@ -6,8 +6,17 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { sendSelectedScripts, deleteMultipleScripts } from './actions'
 
-export default function ScriptGrid({ scripts }: { scripts: any[] }) {
-  const [selectedScript, setSelectedScript] = useState<any>(null)
+interface Script {
+  id: string
+  title: string
+  content: string
+  platform: 'YouTube' | 'LinkedIn'
+  tone: string
+  created_at: string
+}
+
+export default function ScriptGrid({ scripts }: { scripts: Script[] }) {
+  const [selectedScript, setSelectedScript] = useState<Script | null>(null)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [isSending, setIsSending] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useState, useEffect } from 'react'
-import { updatePassword } from '@/app/login/actions'
+import { updatePassword, ActionState } from '@/app/login/actions'
 import { KeyRound, Lock, Loader2, CheckCircle2, AlertCircle, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -9,20 +9,20 @@ import { useRouter } from 'next/navigation'
 export default function ResetPasswordForm() {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(
-    (async (state: any, formData: FormData) => {
-        return await updatePassword(state, formData)
-    }) as any,
-    { error: null, success: null }
+    async (prevState: ActionState, formData: FormData) => {
+        return await updatePassword(prevState, formData)
+    },
+    null
   )
 
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
-    if (state.success) {
+    if (state?.success) {
       const timer = setTimeout(() => router.push('/login'), 3000)
       return () => clearTimeout(timer)
     }
-  }, [state.success, router])
+  }, [state, router])
 
   return (
     <form action={formAction} className="space-y-6">
@@ -49,7 +49,7 @@ export default function ResetPasswordForm() {
       </div>
 
       <AnimatePresence mode="wait">
-        {state.error && (
+        {state?.error && (
             <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ export default function ResetPasswordForm() {
             </motion.div>
         )}
 
-        {state.success && (
+        {state?.success && (
             <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ export default function ResetPasswordForm() {
 
       <button
         type="submit"
-        disabled={isPending || !!state.success}
+        disabled={isPending || !!state?.success}
         className="w-full relative group overflow-hidden rounded-2xl bg-indigo-600 py-4 font-bold text-white shadow-2xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:hover:bg-indigo-600 mt-4"
       >
         <span className="relative z-10 flex items-center justify-center gap-3">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useState, useEffect } from 'react'
-import { changePassword } from '@/app/login/actions'
+import { changePassword, ActionState } from '@/app/login/actions'
 import { KeyRound, Lock, Loader2, CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -9,21 +9,21 @@ import { useRouter } from 'next/navigation'
 export default function ChangePasswordForm() {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(
-    (async (state: any, formData: FormData) => {
-        return await changePassword(state, formData)
-    }) as any,
-    { error: null, success: null }
+    async (prevState: ActionState, formData: FormData) => {
+        return await changePassword(prevState, formData)
+    },
+    null
   )
 
   const [showCurrent, setShowCurrent] = useState(false)
   const [showNew, setShowNew] = useState(false)
 
   useEffect(() => {
-    if (state.success) {
+    if (state?.success) {
       const timer = setTimeout(() => router.push('/profile'), 3000)
       return () => clearTimeout(timer)
     }
-  }, [state.success, router])
+  }, [state, router])
 
   return (
     <form action={formAction} className="space-y-6">
@@ -71,7 +71,7 @@ export default function ChangePasswordForm() {
       </div>
 
       <AnimatePresence mode="wait">
-        {state.error && (
+        {state?.error && (
             <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ export default function ChangePasswordForm() {
             </motion.div>
         )}
 
-        {state.success && (
+        {state?.success && (
             <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -98,7 +98,7 @@ export default function ChangePasswordForm() {
 
       <button
         type="submit"
-        disabled={isPending || !!state.success}
+        disabled={isPending || !!state?.success}
         className="w-full relative group overflow-hidden rounded-2xl bg-indigo-600 py-4 font-bold text-white shadow-2xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:hover:bg-indigo-600 mt-4"
       >
         <span className="relative z-10 flex items-center justify-center gap-3">
