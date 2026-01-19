@@ -98,7 +98,7 @@ export default function ChangePasswordForm() {
 
       <button
         type="submit"
-        disabled={isPending || state.success}
+        disabled={isPending || !!state.success}
         className="w-full relative group overflow-hidden rounded-2xl bg-indigo-600 py-4 font-bold text-white shadow-2xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:hover:bg-indigo-600 mt-4"
       >
         <span className="relative z-10 flex items-center justify-center gap-3">
