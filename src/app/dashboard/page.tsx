@@ -6,7 +6,9 @@ import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DashboardPage() {
+export default async function DashboardPage(props: { searchParams: Promise<{ new_user?: string }> }) {
+  const searchParams = await props.searchParams
+  const isNewUser = searchParams.new_user === 'true'
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -57,7 +59,7 @@ export default async function DashboardPage() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Personal Workspace</span>
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              Welcome Back!!
+              {isNewUser ? 'Welcome!' : 'Welcome Back!'}
             </h1>
             <p className="text-zinc-500 text-lg font-medium max-w-2xl">
               Manage your content strategy and generate high-performing scripts for your social platforms.

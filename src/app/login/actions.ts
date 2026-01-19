@@ -68,12 +68,15 @@ export async function signup(prevState: ActionState, formData: FormData) {
   }
 
   // Send welcome email
-  if (authData.user?.email) {
-    await sendWelcomeEmail(authData.user.email)
+  if (email) {
+    const result = await sendWelcomeEmail(email)
+    if (result?.error) {
+      console.error('Welcome email failed to send:', result.error)
+    }
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/dashboard?new_user=true')
 }
 
 export async function requestPasswordReset(prevState: ActionState, formData: FormData) {
