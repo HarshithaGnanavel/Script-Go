@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ShieldAlert, KeyRound, Lock, Sparkles } from 'lucide-react'
-import ResetPasswordForm from './reset-password-form'
+import ResetPasswordForm from './ResetPasswordForm'
 
 export default async function ResetPasswordPage() {
   // We don't need to check for a user here because Supabase sessions 
