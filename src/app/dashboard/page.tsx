@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, LogOut, Calendar, FileText, Youtube, Linkedin } from 'lucide-react'
+import { Plus, LogOut, Calendar, FileText, Youtube, Linkedin, User } from 'lucide-react'
 import ScriptGrid from './script-grid'
 import { redirect } from 'next/navigation'
 
@@ -40,21 +40,11 @@ export default async function DashboardPage() {
                     Planner
                 </button>
             </Link>
-            <div className="h-6 w-px bg-white/10 hidden sm:block" />
-            <form action={async () => {
-              'use server'
-              const supabase = await createClient()
-              await supabase.auth.signOut()
-              redirect('/login')
-            }}>
-              <button 
-                type="submit"
-                className="group flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-5 py-2.5 text-sm font-bold text-white hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500 transition-all"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </button>
-            </form>
+            <Link href="/profile">
+                <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-indigo-400 hover:bg-white/10 transition-all shadow-lg active:scale-95">
+                    <User className="w-5 h-5" />
+                </button>
+            </Link>
           </div>
         </div>
       </header>

@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 import { revalidatePath } from 'next/cache'
+import { sendScriptEmail } from '@/lib/email'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -99,6 +100,11 @@ export async function generateScript(prevState: any, formData: FormData) {
 
       if (updateError) throw updateError
 
+      // Send script email
+      if (user.email) {
+        await sendScriptEmail(user.email, topic, content)
+      }
+
       revalidatePath('/dashboard')
       return { success: true, content, id: existingId, error: null }
     } else {
@@ -119,6 +125,11 @@ export async function generateScript(prevState: any, formData: FormData) {
         .single()
 
       if (insertError) throw insertError
+
+      // Send script email
+      if (user.email) {
+        await sendScriptEmail(user.email, topic, content)
+      }
 
       revalidatePath('/dashboard')
       return { success: true, content, id: data.id, error: null }
