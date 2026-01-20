@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Youtube, Linkedin, Sparkles, X, Copy, Calendar, Mail, Check, CheckSquare, Square, Trash2 } from 'lucide-react'
+import { Youtube, Linkedin, Sparkles, X, Copy, Calendar, Mail, Check, CheckSquare, Square, Trash2, ChevronRight, Terminal, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { sendSelectedScripts, deleteMultipleScripts } from './actions'
@@ -10,7 +10,7 @@ interface Script {
   id: string
   title: string
   content: string
-  platform: 'YouTube' | 'LinkedIn'
+  platform: 'YouTube' | 'LinkedIn' | 'Instagram'
   tone: string
   created_at: string
 }
@@ -47,218 +47,224 @@ export default function ScriptGrid({ scripts }: { scripts: Script[] }) {
     const res = await sendSelectedScripts(selectedIds)
     setIsSending(false)
     if (res.success) {
-      setMessage(`Successfully sent ${selectedIds.length} script(s)!`)
+      setMessage(`ARCHIVED ${selectedIds.length} SCRIPTS`)
       setSelectedIds([])
       setTimeout(() => setMessage(''), 5000)
     } else {
-      setMessage(`Error: ${res.error}`)
+      setMessage(`ERROR: ${res.error}`)
       setTimeout(() => setMessage(''), 5000)
     }
   }
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return
-    if (!confirm(`Are you sure you want to delete ${selectedIds.length} scripts? This action cannot be undone.`)) return
+    if (!confirm(`PURGE ${selectedIds.length} VECTORS? THIS ACTION IS IRREVERSIBLE.`)) return
     
     setIsDeleting(true)
     const res = await deleteMultipleScripts(selectedIds)
     setIsDeleting(false)
     
     if (res.success) {
-      setMessage(`Deleted ${selectedIds.length} script(s).`)
+      setMessage(`PURGED ${selectedIds.length} ASSETS`)
       setSelectedIds([])
       setTimeout(() => setMessage(''), 5000)
     } else {
-      setMessage(`Error: ${res.error}`)
+      setMessage(`ERROR: ${res.error}`)
       setTimeout(() => setMessage(''), 5000)
     }
   }
 
   return (
-    <>
-      <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6 bg-zinc-950/40 p-6 lg:px-10 rounded-[2.5rem] border border-white/5 backdrop-blur-xl shadow-2xl">
-        <div className="flex items-center gap-8">
+    <div className="relative z-10">
+      {/* Management Console Bar */}
+      <div className="mb-20 flex flex-col lg:flex-row items-center justify-between gap-12 bg-black/40 p-12 rounded-none border border-white/5 backdrop-blur-3xl relative">
+        <div className="absolute top-0 left-12 h-0.5 w-24 bg-white/20" />
+        
+        <div className="flex items-center gap-12">
             <button 
                 onClick={toggleSelectAll}
-                className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-sm font-bold text-zinc-300 hover:text-white"
+                className="flex items-center gap-4 px-8 py-4 rounded-none bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 transition-all text-[10px] font-black uppercase tracking-[0.5em] text-white/90 hover:text-white"
             >
-                {selectedIds.length === scripts.length ? <CheckSquare className="w-5 h-5 text-indigo-500" /> : <Square className="w-5 h-5" />}
-                {selectedIds.length === scripts.length ? 'Deselect All' : 'Select All'}
+                {selectedIds.length === scripts.length ? <CheckSquare className="w-4 h-4 text-white" /> : <Square className="w-4 h-4" />}
+                {selectedIds.length === scripts.length ? 'Reset All' : 'Batch Select'}
             </button>
-            <div className="h-8 w-px bg-white/10 hidden sm:block" />
+            <div className="h-12 w-px bg-white/10 hidden sm:block" />
             <div className="flex flex-col">
-                <span className="text-xs font-black uppercase tracking-widest text-zinc-600 mb-0.5">Selection</span>
-                <span className="text-sm font-bold text-zinc-400">
-                    <span className="text-white text-base">{selectedIds.length}</span> items selected
+                <span className="text-[10px] font-black uppercase tracking-[0.6em] text-white/60 mb-2">Status_</span>
+                <span className="text-[12px] font-bold text-white uppercase tracking-[0.3em]">
+                    <span className="text-white text-xl mr-4">{selectedIds.length.toString().padStart(2, '0')}</span> NODES READY
                 </span>
             </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-8">
+            <AnimatePresence>
             {message && (
                 <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-5 py-2.5 rounded-2xl border border-indigo-500/20 mr-2"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-[10px] font-bold text-white bg-white/5 px-8 py-4 border border-white/10 uppercase tracking-[0.5em]"
                 >
                     {message}
                 </motion.div>
             )}
+            </AnimatePresence>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-6">
                 <button
                     onClick={handleSendSelected}
                     disabled={selectedIds.length === 0 || isSending || isDeleting}
-                    className="flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-indigo-600 text-white text-sm font-bold shadow-xl shadow-indigo-600/20 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 group"
+                    className="flex items-center gap-5 px-12 py-5 h-16 bg-white text-black text-[11px] font-black uppercase tracking-[0.5em] disabled:opacity-20 transition-all active:scale-[0.98] shadow-2xl hover:bg-silver"
                 >
-                    {isSending ? <Sparkles className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />}
-                    {isSending ? 'Sending...' : 'Email Selected'}
+                    {isSending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+                    {isSending ? 'Syncing...' : 'Archive Batch'}
                 </button>
 
                 <button
                     onClick={handleDeleteSelected}
                     disabled={selectedIds.length === 0 || isSending || isDeleting}
-                    className="flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-zinc-400 text-sm font-bold hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 group"
+                    className="flex items-center justify-center h-16 w-16 border border-white/10 text-white/30 hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-500 disabled:opacity-20 transition-all"
                 >
-                    {isDeleting ? <Sparkles className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />}
-                    {isDeleting ? 'Deleting...' : 'Delete'}
+                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                 </button>
             </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Grid - Sharp and Systemic */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 pb-32">
         {scripts.map((script) => (
           <motion.div
             layoutId={script.id}
             key={script.id}
-            whileHover={{ y: -8 }}
-            className={`group premium-card rounded-[2.5rem] p-8 cursor-pointer relative overflow-hidden flex flex-col min-h-[220px] transition-all duration-300 ${selectedIds.includes(script.id) ? 'ring-2 ring-indigo-500 bg-indigo-500/5 border-indigo-500/20' : ''}`}
+            className={`group h-[320px] rounded-none border p-12 cursor-pointer relative overflow-hidden flex flex-col transition-all duration-500 
+                ${selectedIds.includes(script.id) ? 'border-white bg-white/5' : 'border-white/10 bg-white/[0.01] hover:border-white/30'}
+                ${selectedScript?.id === script.id ? 'opacity-0' : 'opacity-100'}
+            `}
             onClick={() => setSelectedScript(script)}
           >
-            {/* Selection Checkbox */}
+            {/* Selection Trigger */}
             <div 
                 onClick={(e) => toggleSelect(script.id, e)}
-                className={`absolute top-6 left-6 z-10 h-6 w-6 rounded-lg border flex items-center justify-center transition-all ${selectedIds.includes(script.id) ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-black/40 border-white/10 text-transparent hover:border-indigo-500'}`}
+                className={`absolute top-12 left-12 z-10 h-6 w-6 rounded-none border flex items-center justify-center transition-all ${selectedIds.includes(script.id) ? 'bg-white border-white text-black' : 'bg-transparent border-white/20 text-transparent hover:border-white'}`}
             >
                 <Check className="w-4 h-4 stroke-[3px]" />
             </div>
 
-            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-indigo-400" />
-                </div>
+            <div className="absolute top-12 right-12 opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-x-3 group-hover:translate-x-0">
+                <Sparkles className="h-5 w-5 text-white/40" />
             </div>
 
-            <div className="mb-6 pt-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-zinc-900 border border-white/5 mb-4 group-hover:border-indigo-500/30 transition-colors">
-                    {script.platform === 'YouTube' ? (
-                        <Youtube className="w-3.5 h-3.5 text-red-500" />
-                    ) : (
-                        <Linkedin className="w-3.5 h-3.5 text-blue-500" />
-                    )}
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{script.platform}</span>
+            <div className="mt-12 mb-10 flex flex-col gap-6">
+                <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.6em] text-white/60">{script.platform} // 0x{script.id.slice(0, 4)}</span>
                 </div>
-                <h3 className="line-clamp-2 text-xl font-bold text-white leading-snug group-hover:text-indigo-400 transition-colors">
-                    {script.title || "Untitled Script"}
+                <h3 className="line-clamp-2 text-2xl font-display font-medium text-white leading-[1.2] group-hover:text-gradient transition-all tracking-wide">
+                    {script.title || "NULL_ASSET"}
                 </h3>
             </div>
 
-            <div className="mt-auto flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-zinc-900 border border-white/5 flex items-center justify-center">
-                        <span className="text-[10px] font-bold text-indigo-400">{script.tone?.charAt(0)}</span>
-                    </div>
-                    <span className="text-xs font-bold text-zinc-500">{script.tone || 'Professional'}</span>
+            <div className="mt-auto pt-8 border-t border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-5">
+                    <div className="h-8 w-1 bg-white/10 group-hover:bg-white transition-all" />
+                    <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.5em]">{script.tone || 'NEUTRAL'}</span>
                 </div>
-                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
-                    {new Date(script.created_at).toLocaleDateString()}
-                </span>
+                <div className="h-10 w-10 rounded-full border border-white/5 flex items-center justify-center group-hover:border-white/20 transition-all">
+                    <ChevronRight className="w-4 h-4 text-white/60" />
+                </div>
             </div>
+            
+            {/* Scanline Effect */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/[0.02] to-transparent h-px top-1/2 group-hover:animate-scanline" />
           </motion.div>
         ))}
       </div>
 
       <AnimatePresence>
         {selectedScript && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 lg:p-12">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedScript(null)}
-              className="absolute inset-0 bg-[#020617]/95 backdrop-blur-2xl"
+              className="absolute inset-0 bg-black/90 backdrop-blur-3xl"
             />
             
             <motion.div
               layoutId={selectedScript.id}
-              className="relative w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-[3rem] border border-white/5 bg-zinc-950 shadow-[0_0_100px_rgba(99,102,241,0.05)] premium-card flex flex-col"
+              className="relative w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-none border border-white/10 bg-black shadow-2xl flex flex-col"
             >
-              {/* Header */}
-              <div className="p-8 lg:p-12 border-b border-white/5 flex items-center justify-between bg-zinc-950/50">
-                <div className="flex items-center gap-8">
-                    <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center">
+              {/* Terminal Header */}
+              <div className="px-10 py-10 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                <div className="flex items-center gap-10">
+                    <div className="h-14 w-14 rounded-none border border-white/10 flex items-center justify-center bg-white/[0.02]">
                         {selectedScript.platform === 'YouTube' ? (
-                            <Youtube className="w-8 h-8 text-red-500" />
+                            <Youtube className="w-6 h-6 text-white" />
+                        ) : selectedScript.platform === 'LinkedIn' ? (
+                            <Linkedin className="w-6 h-6 text-white" />
                         ) : (
-                            <Linkedin className="w-8 h-8 text-blue-500" />
+                            <Sparkles className="w-6 h-6 text-white" />
                         )}
                     </div>
-                    <div>
-                        <div className="flex items-center gap-4 mb-2">
-                            <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">{selectedScript.platform}</span>
-                            <div className="h-1 w-1 rounded-full bg-zinc-800" />
-                            <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">{selectedScript.tone}</span>
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-4">
+                            <span className="text-[9px] font-black text-white/70 uppercase tracking-[0.6em]">{selectedScript.platform} COMMAND</span>
+                            <div className="h-1 w-1 bg-white animate-pulse" />
+                            <span className="text-[9px] font-black text-white/70 uppercase tracking-[0.6em]">{selectedScript.tone}</span>
                         </div>
-                        <h2 className="text-2xl lg:text-3xl font-bold text-white tracking-tight">{selectedScript.title}</h2>
+                        <h2 className="text-2xl lg:text-3xl font-display font-semibold text-white tracking-[0.05em] uppercase">{selectedScript.title}</h2>
                     </div>
                 </div>
                 <button 
                   onClick={() => setSelectedScript(null)}
-                  className="h-12 w-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 transition-all border border-white/5"
+                  className="h-14 w-14 rounded-none border border-white/10 hover:border-white flex items-center justify-center text-white/40 hover:text-white transition-all"
                 >
-                  <X className="h-6 w-6" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
-              {/* Content Area */}
-              <div className="flex-1 overflow-y-auto p-8 lg:p-12 scrollbar-thin scrollbar-thumb-indigo-500/10 custom-scrollbar">
-                <div className="prose prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap font-sans text-zinc-300 leading-[1.8] text-lg bg-black/40 p-10 rounded-[2rem] border border-white/5">
-                    {selectedScript.content}
-                  </pre>
-                </div>
+              {/* Terminal Text Area */}
+              <div className="flex-1 overflow-y-auto p-12 lg:p-16 scrollbar-thin scrollbar-thumb-white/5 custom-scrollbar bg-black">
+                  <div className="relative group">
+                    <div className="absolute -top-3 left-10 bg-black px-4 text-[8px] font-black text-white/60 uppercase tracking-[0.8em] z-10 transition-colors group-focus-within:text-white">Active Vector_</div>
+                    <div className="w-full rounded-none border border-white/10 bg-transparent p-12 text-white/90 font-sans text-xl tracking-wide leading-[2] whitespace-pre-wrap min-h-[400px]">
+                        {selectedScript.content}
+                    </div>
+                  </div>
               </div>
 
-              {/* Footer */}
-              <div className="p-8 lg:p-10 border-t border-white/5 flex items-center justify-between bg-zinc-950/50">
-                <div className="flex gap-4">
+              {/* Management Footer */}
+              <div className="px-10 py-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 bg-white/[0.01]">
+                <div className="flex gap-6 w-full md:w-auto">
                   <button 
                     onClick={async () => {
                       const res = await sendSelectedScripts([selectedScript.id])
-                      if (res.success) setMessage('Script sent to email!')
+                      if (res.success) setMessage('ARCHIVED SUCCESSFUL')
                     }}
-                    className="flex items-center gap-2 rounded-2xl bg-indigo-600 px-8 py-3.5 text-sm font-bold text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/20 transition-all active:scale-95"
+                    className="flex-1 md:flex-none flex items-center justify-center gap-4 rounded-none bg-white px-12 py-5 text-[10px] font-black uppercase tracking-[0.4em] text-black hover:bg-silver transition-all shadow-xl active:scale-[0.98]"
                   >
                     <Mail className="h-4 w-4" />
-                    Send to Email (Single)
+                    Archive Output
                   </button>
-                  <Link href={`/editor?id=${selectedScript.id}`}>
+                  <Link href={`/editor?id=${selectedScript.id}`} className="flex-1 md:flex-none">
                     <button 
-                        className="flex items-center gap-2 rounded-2xl bg-white/5 border border-white/10 px-8 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-all active:scale-95"
+                        className="w-full flex items-center justify-center gap-4 rounded-none border border-white/10 px-12 py-5 text-[10px] font-black uppercase tracking-[0.4em] text-white/90 hover:border-white hover:text-white hover:bg-white/5 transition-all"
                     >
-                        Refine in Editor
+                        Re-Execute
                     </button>
                   </Link>
                 </div>
-                <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em]">
-                    System ID: {selectedScript.id.slice(0,8)}
+                <div className="text-[9px] font-black text-white/20 uppercase tracking-[0.5em] flex items-center gap-4">
+                    <Terminal className="w-3 h-3" />
+                    Node_ID: {selectedScript.id}
                 </div>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }

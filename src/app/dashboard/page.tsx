@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, LogOut, Calendar, FileText, Youtube, Linkedin, User } from 'lucide-react'
+import { Plus, LogOut, Calendar, FileText, Youtube, Linkedin, User, Zap, ChevronRight } from 'lucide-react'
 import ScriptGrid from './script-grid'
 import { redirect } from 'next/navigation'
 
@@ -25,97 +25,97 @@ export default async function DashboardPage(props: { searchParams: Promise<{ new
   const scripts = data || []
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
-      {/* Premium Header */}
-      <header className="border-b border-white/5 bg-zinc-950/40 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto flex h-20 items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-3 group transition-all">
-            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-xl shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
-              S
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 relative overflow-hidden">
+      {/* Background Elements - Absolute Sync with Landing Page */}
+      <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.4]"></div>
+      <div className="fixed top-[-15%] right-[-10%] w-[60vw] h-[60vw] lens-flare pointer-events-none z-0 opacity-40"></div>
+
+      {/* Premium Header - Matching Landing Page Nav */}
+      <nav className="relative z-50 w-full border-b border-white/5 bg-black/40 backdrop-blur-3xl">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-5 group">
+            <div className="w-9 h-9 bg-white rounded-none flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span className="text-black font-display font-bold text-lg">S</span>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-white">ScriptGo</span>
+            <span className="font-display text-2xl tracking-[0.15em] font-semibold uppercase text-gradient">ScriptGo</span>
           </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/planner">
-                <button className="hidden sm:flex items-center gap-2 text-sm font-semibold text-zinc-400 hover:text-indigo-400 transition-colors px-4 py-2 rounded-xl hover:bg-white/5">
-                    <Calendar className="w-4 h-4" />
-                    Planner
-                </button>
+          
+          <div className="flex items-center gap-10">
+            <Link href="/planner" className="flex items-center gap-3 text-[10px] font-bold text-white/80 uppercase tracking-[0.4em] hover:text-white transition-colors">
+                <Zap className="w-4 h-4" />
+                Planner
             </Link>
-            <Link href="/profile">
-                <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-indigo-400 hover:bg-white/10 transition-all shadow-lg active:scale-95">
-                    <User className="w-5 h-5" />
-                </button>
+            <Link href="/profile" className="w-12 h-12 border border-white/10 flex items-center justify-center hover:border-white transition-all bg-white/[0.02]">
+                <User className="w-5 h-5 text-white/90" />
             </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="container mx-auto px-6 py-12 max-w-7xl">
-        <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Personal Workspace</span>
+      <main className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 py-24 min-h-screen">
+        <div className="mb-32 flex flex-col md:flex-row md:items-end justify-between gap-16">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-4 px-5 py-2 border border-white/10 bg-white/[0.02]">
+                <div className="h-2 w-2 rounded-none bg-white animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-[0.6em] text-white/70">Personal Hub_</span>
             </div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              {isNewUser ? 'Welcome!' : 'Welcome Back!'}
+            <h1 className="text-6xl lg:text-8xl font-display font-semibold text-gradient tracking-[0.05em] leading-[0.95]">
+              {isNewUser ? 'SYSTEM INITIALIZED' : 'WELCOME BACK'}
             </h1>
-            <p className="text-zinc-500 text-lg font-medium max-w-2xl">
-              Manage your content strategy and generate high-performing scripts for your social platforms.
+            <p className="text-white/70 text-base md:text-lg font-medium max-w-3xl uppercase tracking-[0.4em] leading-relaxed">
+              Designate your strategy and execute high-performance vectors across the digital domain.
             </p>
           </div>
           
           <Link href="/editor">
-            <button className="group relative inline-flex items-center gap-3 rounded-2xl bg-indigo-600 px-8 py-4 text-sm font-bold text-white shadow-2xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all hover:-translate-y-1 active:scale-95">
-              <Plus className="h-5 w-5" />
-              Create New Script
-              <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+            <button className="group relative bg-white text-black px-12 py-7 rounded-none font-bold text-[11px] uppercase tracking-[0.5em] transition-all hover:bg-silver active:scale-[0.98] cta-glow-pulse flex items-center gap-3">
+              <Plus className="h-4 w-4" />
+              New Protocol
             </button>
           </Link>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        {/* Stats Grid - Sharp and Premium */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
             {[
-                { label: 'Total Content', value: scripts.length, icon: <FileText className="w-5 h-5" />, color: 'indigo' },
-                { label: 'YouTube Assets', value: scripts.filter(s => s.platform === 'YouTube').length, icon: <Youtube className="w-5 h-5" />, color: 'red' },
-                { label: 'LinkedIn Posts', value: scripts.filter(s => s.platform === 'LinkedIn').length, icon: <Linkedin className="w-5 h-5" />, color: 'blue' },
+                { label: 'Total Output', value: scripts.length, detail: 'ALL_NODES' },
+                { label: 'YouTube Stream', value: scripts.filter(s => s.platform === 'YouTube').length, detail: 'VIDEO_CORE' },
+                { label: 'LinkedIn Intel', value: scripts.filter(s => s.platform === 'LinkedIn').length, detail: 'SOCIAL_INTEL' },
             ].map((stat, i) => (
-                <div key={i} className="premium-card p-6 rounded-3xl border-white/5 flex items-center justify-between group">
-                    <div className="space-y-1">
-                        <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">{stat.label}</p>
-                        <p className="text-3xl font-black text-white group-hover:text-indigo-400 transition-colors">{stat.value}</p>
+                <div key={i} className="min-h-[220px] rounded-none border border-white/10 bg-white/[0.01] p-10 flex flex-col justify-between group transition-all hover:border-white/30 backdrop-blur-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-500" />
+                    <div className="space-y-4">
+                        <p className="text-[9px] font-black text-white/50 uppercase tracking-[0.6em]">{stat.label}</p>
+                        <p className="text-5xl font-display font-bold text-white group-hover:text-gradient transition-all duration-500 tracking-tighter">
+                            {stat.value.toString().padStart(2, '0')}
+                        </p>
                     </div>
-                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center border transition-all duration-500
-                        ${stat.color === 'indigo' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white' : ''}
-                        ${stat.color === 'red' ? 'bg-red-500/10 text-red-400 border-red-500/20 group-hover:bg-red-500 group-hover:text-white' : ''}
-                        ${stat.color === 'blue' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white' : ''}
-                    `}>
-                        {stat.icon}
+                    <div className="flex items-center justify-between text-[8px] font-black tracking-[0.5em] text-white/30 group-hover:text-white/80 transition-colors">
+                        <span>{stat.detail} // SYSTEM</span>
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                 </div>
             ))}
         </div>
 
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-               <div className="h-8 w-1 bg-indigo-500 rounded-full" />
-               Recent Content
+        <div className="space-y-12">
+          <div className="flex items-center gap-6">
+            <h2 className="text-xs font-black text-white uppercase tracking-[0.8em] flex items-center gap-4">
+               Output Logs_
             </h2>
+            <div className="h-px flex-1 bg-white/5" />
           </div>
           
           {!scripts || scripts.length === 0 ? (
-            <div className="text-center py-32 rounded-[3rem] border border-dashed border-white/10 bg-white/[0.01]">
-              <div className="h-20 w-20 rounded-3xl bg-indigo-500/5 flex items-center justify-center mx-auto mb-6">
-                <FileText className="h-10 w-10 text-zinc-800" />
+            <div className="text-center py-40 border border-white/5 bg-white/[0.01] flex flex-col items-center">
+              <div className="w-16 h-16 border border-white/10 rotate-45 flex items-center justify-center mb-10 group hover:border-white transition-all">
+                <FileText className="h-6 w-6 text-white/60 group-hover:text-white rotate-[-45deg] transition-all" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Workspace Empty</h3>
-              <p className="text-zinc-500 mb-8 font-medium">Your creative journey begins with a single masterpiece.</p>
+              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.5em] mb-4">Archives Empty</h3>
+              <p className="text-white/60 text-[9px] uppercase tracking-[0.3em] mb-12">No content vectors detected in current session.</p>
               <Link href="/editor">
-                <button className="px-8 py-4 rounded-xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all border border-white/10">
-                  Generate Your First Script
+                <button className="px-10 py-5 rounded-none border border-white/20 text-white font-bold text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">
+                  Execute First Command
                 </button>
               </Link>
             </div>
@@ -124,6 +124,12 @@ export default async function DashboardPage(props: { searchParams: Promise<{ new
           )}
         </div>
       </main>
+      
+      {/* Footer Branding */}
+      <footer className="relative z-10 py-20 border-t border-white/5 flex flex-col items-center justify-center opacity-40">
+          <div className="w-8 h-8 border border-white/40 flex items-center justify-center font-display font-bold text-base mb-4">S</div>
+          <span className="text-[8px] font-black uppercase tracking-[0.6em] text-white/80">ScriptGo-V2 Platinum System</span>
+      </footer>
     </div>
   )
 }

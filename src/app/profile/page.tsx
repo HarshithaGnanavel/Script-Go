@@ -27,21 +27,23 @@ export default async function ProfilePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white font-sans selection:bg-indigo-500/30">
-        {/* Background Gradients */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
-        </div>
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 relative overflow-hidden">
+        {/* Background Elements - Absolute Sync with Landing Page */}
+        <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.4]"></div>
+        <div className="fixed top-[-15%] right-[-10%] w-[50vw] h-[50vw] lens-flare pointer-events-none z-0 opacity-40"></div>
+        <div className="fixed bottom-[-15%] left-[-10%] w-[50vw] h-[50vw] lens-flare pointer-events-none z-0 opacity-20"></div>
 
-        <div className="container mx-auto px-6 py-12 max-w-4xl relative z-10">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 py-10 relative z-10">
             {/* Header */}
-            <div className="mb-12 flex items-center justify-between">
-                <Link href="/dashboard" className="group flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                    <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all">
-                        <ArrowLeft className="w-5 h-5" />
+            <div className="mb-10 flex items-center justify-between">
+                <Link href="/dashboard" className="group flex items-center gap-4">
+                    <div className="h-9 w-9 rounded-none bg-white border border-white flex items-center justify-center group-hover:bg-[#E2E2E2] transition-all">
+                        <ArrowLeft className="w-3.5 h-3.5 text-black" />
                     </div>
-                    <span className="font-bold text-sm tracking-tight text-white/60 group-hover:text-white">Return to Studio</span>
+                    <div className="space-y-0.5">
+                        <span className="block text-[9px] font-black uppercase tracking-[0.5em] text-white/40 group-hover:text-white/60 transition-colors">Return</span>
+                        <span className="block font-display font-medium text-sm tracking-[0.2em] text-white uppercase">Profile</span>
+                    </div>
                 </Link>
                 
                 <form action={async () => {
@@ -52,65 +54,74 @@ export default async function ProfilePage() {
                 }}>
                   <button 
                     type="submit"
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-bold active:scale-95"
+                    className="flex items-center gap-2.5 px-6 py-2.5 rounded-none border border-white/10 bg-white/[0.02] text-white/50 hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5 transition-all text-[10px] font-black uppercase tracking-[0.5em] active:scale-95"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-3 h-3" />
                     Sign Out
                   </button>
                 </form>
             </div>
 
             {/* Profile Hero */}
-            <div className="premium-card p-10 lg:p-14 rounded-[3rem] border-white/5 bg-zinc-950/40 backdrop-blur-2xl mb-10 overflow-hidden relative">
+            <div className="relative p-8 lg:p-12 border border-white/5 bg-white/[0.01] backdrop-blur-3xl mb-8 overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.02] blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
-                    <div className="h-32 w-32 rounded-[2.5rem] bg-gradient-to-br from-indigo-500 to-blue-600 p-1">
-                        <div className="h-full w-full rounded-[2.3rem] bg-zinc-950 flex items-center justify-center">
-                            <User className="w-14 h-14 text-white" />
+                    <div className="h-28 w-28 rounded-none border border-white/10 p-1 bg-white/[0.01]">
+                        <div className="h-full w-full rounded-none bg-zinc-900/50 flex items-center justify-center border border-white/5">
+                            <User className="w-10 h-10 text-white/10" />
                         </div>
                     </div>
-                    <div className="space-y-4">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                            <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Authentic Creator</span>
+                    <div className="space-y-3">
+                        <div className="inline-flex items-center gap-2.5 px-3.5 py-1 border border-white/10 bg-white/[0.02]">
+                            <div className="h-1 w-1 bg-white animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">Identity_Matrix</span>
                         </div>
-                        <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-white">{user.email?.split('@')[0]}</h1>
-                        <div className="flex items-center gap-3 text-zinc-500 font-medium">
-                            <Mail className="w-4 h-4" />
+                        <h1 className="text-3xl lg:text-4xl font-display font-semibold tracking-[0.2em] text-gradient uppercase leading-none">
+                            {user.email?.split('@')[0]}
+                        </h1>
+                        <div className="flex items-center gap-2.5 text-white/30 font-bold text-[10px] uppercase tracking-[0.3em]">
+                            <Mail className="w-3 h-3" />
                             {user.email}
                         </div>
                     </div>
                 </div>
                 
                 {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 relative z-10">
-                    {stats.map((stat, i) => (
-                        <div key={i} className="bg-white/5 border border-white/5 rounded-2xl p-6 flex flex-col gap-3 group hover:border-indigo-500/20 transition-all">
-                            <div className="flex items-center justify-between">
-                                {stat.icon}
-                                <ChevronRight className="w-4 h-4 text-zinc-800 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-12 relative z-10">
+                    {[
+                        { label: 'Total Scripts', value: count || 0, detail: 'DATABASE_LOAD' },
+                        { label: 'Member Since', value: new Date(user.created_at).toLocaleDateString(), detail: 'ENTRY_LOG' },
+                    ].map((stat, i) => (
+                        <div key={i} className="min-h-[140px] rounded-none border border-white/10 bg-white/[0.01] p-6 flex flex-col justify-between group transition-all hover:border-white/30 backdrop-blur-sm relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-500" />
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">{stat.label}</p>
+                                <p className="text-2xl font-display font-bold text-white group-hover:text-gradient transition-all duration-500 tracking-[0.2em]">
+                                    {typeof stat.value === 'number' ? stat.value.toString().padStart(2, '0') : stat.value}
+                                </p>
                             </div>
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">{stat.label}</p>
-                                <p className="text-xl font-bold text-white">{stat.value}</p>
+                            <div className="flex items-center justify-between text-[9px] font-black tracking-[0.3em] text-white/20 group-hover:text-white/60 transition-colors uppercase">
+                                <span>{stat.detail} // ANALYTICS</span>
+                                <ChevronRight className="w-2.5 h-2.5 group-hover:translate-x-1 transition-transform" />
                             </div>
                         </div>
                     ))}
                 </div>
-
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
             </div>
 
             {/* Settings Sections */}
-            <div className="grid grid-cols-1 gap-8">
-                <div className="premium-card p-10 rounded-[3rem] border-white/5 bg-zinc-950/40 backdrop-blur-2xl">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                                <Key className="w-6 h-6 text-indigo-500" />
+            <div className="grid grid-cols-1 gap-6">
+                <div className="relative p-8 rounded-none border border-white/5 bg-white/[0.01] backdrop-blur-3xl overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-white/5" />
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                        <div className="space-y-2.5">
+                            <h2 className="text-xl font-display font-semibold text-white uppercase tracking-[0.2em] flex items-center gap-4">
+                                <Key className="w-5 h-5 text-white/30" />
                                 Security & Access
                             </h2>
-                            <p className="text-zinc-500 font-medium max-w-md">
-                                Keep your creative assets secure. You can trigger a password reset flow to update your credentials.
+                            <p className="text-white/30 font-bold text-[11px] uppercase tracking-[0.15em] max-w-lg leading-relaxed">
+                                Maintain absolute control over your profile's security layer. Rotate access keys or initialize password recovery protocols below.
                             </p>
                         </div>
                         
@@ -120,9 +131,9 @@ export default async function ProfilePage() {
             </div>
 
             {/* Footer Branding */}
-            <div className="mt-20 text-center space-y-4">
-                <div className="h-px w-32 bg-gradient-to-r from-transparent via-white/10 to-transparent mx-auto" />
-                <p className="text-xs font-bold text-zinc-600 uppercase tracking-[0.4em]">ScriptGo Studio Engine v2.0</p>
+            <div className="mt-24 text-center space-y-6">
+                <div className="h-px w-48 bg-gradient-to-r from-transparent via-white/10 to-transparent mx-auto" />
+                <p className="text-[8px] font-black text-white/15 uppercase tracking-[0.8em]">ScriptGo_Core_V2.5_Stable</p>
             </div>
         </div>
     </div>

@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef, useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
-import { generateScript, saveScript } from './actions' // We'll add saveScript logic inside client or import
+import { generateScript, saveScript } from './actions'
 import Link from 'next/link'
-import { ArrowLeft, Copy, Save, Loader2, Sparkles } from 'lucide-react'
+import { ArrowLeft, Copy, Save, Loader2, Sparkles, Image as ImageIcon, Zap, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 
 type State = {
   error: string | null
@@ -27,18 +28,17 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="group relative flex w-full items-center justify-center gap-3 rounded-2xl bg-indigo-600 px-4 py-5 text-sm font-bold text-white shadow-2xi shadow-indigo-600/20 hover:bg-indigo-500 transition-all active:scale-[0.98]"
+      className="group relative w-full h-[70px] flex items-center justify-center gap-4 bg-white text-black font-display font-bold text-[11px] uppercase tracking-[0.5em] transition-all hover:bg-[#E2E2E2] active:scale-[0.98] disabled:opacity-50 cta-glow-pulse"
     >
       {pending ? (
         <>
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="tracking-widest uppercase text-[10px]">Generating...</span>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span>Syncing...</span>
         </>
       ) : (
         <>
-          <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
-          <span className="tracking-widest uppercase text-[10px]">Generate content</span>
-          <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <Sparkles className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+          <span>Execute Protocol</span>
         </>
       )}
     </button>
@@ -51,6 +51,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
   const [currentId, setCurrentId] = useState(initialData?.id || '')
   const [platform, setPlatform] = useState(initialData?.platform || 'LinkedIn')
   const [isSaving, setIsSaving] = useState(false)
+  const [showVisuals, setShowVisuals] = useState(false)
   
   const router = useRouter()
 
@@ -90,224 +91,281 @@ export default function EditorClient({ initialData }: { initialData: any }) {
     setContent(e.target.value)
   }
 
-  return (
-    <div className="flex h-screen flex-col bg-background md:flex-row overflow-hidden relative">
-      {/* Decorative Professional Blobs */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-600/5 blur-[150px] -z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-violet-600/5 blur-[150px] -z-10 pointer-events-none" />
+  const extractVisuals = (text: string) => {
+    // Robust regex to handle escaping from LLM like \[IMAGE\_PROMPT: ... \]
+    const regex = /(?:\\?\[)IMAGE(?:\\?\_)PROMPT:\s*(.*?)(?:\\?\])/g;
+    const prompts = [];
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      prompts.push(match[1]);
+    }
+    return prompts;
+  };
 
-      {/* LEFT SIDE: Professional Sidebar */}
-      <div className="w-full md:w-[380px] lg:w-[440px] border-r border-white/5 bg-zinc-950/60 backdrop-blur-3xl p-10 flex flex-col h-full overflow-y-auto z-10 scrollbar-hide">
-        <div className="mb-12 flex items-center gap-5">
-          <Link href="/dashboard" className="group rounded-2xl p-3 bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all">
-            <ArrowLeft className="h-5 w-5 text-zinc-400 group-hover:text-indigo-400 transition-colors" />
+  const visuals = extractVisuals(content);
+
+  return (
+    <div className="flex h-screen flex-col bg-black md:flex-row overflow-hidden relative font-sans text-white selection:bg-white/20">
+      {/* Background Elements - Absolute Sync with Landing Page */}
+      <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.4]"></div>
+      <div className="fixed top-[-15%] right-[-10%] w-[50vw] h-[50vw] lens-flare pointer-events-none z-0 opacity-40"></div>
+
+      {/* LEFT SIDE: Cockpit Sidebar */}
+      <div className="w-full md:w-[400px] lg:w-[480px] border-r border-white/5 bg-black/50 backdrop-blur-3xl p-12 flex flex-col h-full overflow-y-auto z-10 scrollbar-hide">
+        <div className="mb-20 flex items-start gap-10">
+          <Link href="/dashboard" className="group rounded-none p-4 border border-white/10 hover:border-white transition-all bg-white/[0.02]">
+            <ArrowLeft className="h-4 w-4 text-white/70 group-hover:text-white transition-colors" />
           </Link>
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold text-white tracking-tight">Editor</h1>
-            <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest leading-none">
-                AI Content Engine
-                </span>
-                <Link href="/planner" className="px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-400 text-[9px] font-bold uppercase tracking-widest border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">Planner</Link>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-display font-semibold tracking-[0.1em] uppercase text-gradient leading-none">Editor</h1>
+            <div className="flex items-center gap-4">
+                <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.5em]">Module_01</span>
+                <Link href="/planner" className="group px-4 py-1.5 rounded-none border border-white/10 bg-white/[0.02] text-white/80 text-[9px] font-black uppercase tracking-[0.4em] hover:border-white hover:text-white transition-all flex items-center gap-2">
+                    Planner <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </Link>
             </div>
           </div>
         </div>
 
-        <form action={dispatch} className="flex-1 flex flex-col gap-10">
+        <form action={dispatch} className="flex-1 flex flex-col gap-12">
             <input type="hidden" name="id" value={currentId} />
             
-          <div className="space-y-8">
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">
-                Platform
-              </label>
+          <div className="space-y-10">
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Network Protocol</label>
               <div className="relative group">
                   <select
                   name="platform"
                   defaultValue={platform}
                   onChange={(e) => setPlatform(e.target.value)}
-                  className="flex h-14 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all appearance-none cursor-pointer"
+                  className="flex h-16 w-full items-center justify-between rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all appearance-none cursor-pointer"
                   >
-                  <option value="LinkedIn" className="bg-zinc-900 text-white font-sans">LinkedIn Post</option>
-                  <option value="YouTube" className="bg-zinc-900 text-white font-sans">YouTube Script</option>
+                  <option value="LinkedIn" className="bg-zinc-950 text-white">LinkedIn Intel</option>
+                  <option value="Instagram" className="bg-zinc-950 text-white">Instagram Burst</option>
+                  <option value="YouTube" className="bg-zinc-950 text-white">YouTube Stream</option>
                   </select>
-                  <div className="absolute right-5 top-4.5 pointer-events-none text-zinc-500 group-focus-within:text-indigo-400 transition-colors">
-                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <div className="absolute right-6 top-6 pointer-events-none text-white/20 transition-colors">
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                   </div>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">
-                Content Topic
-              </label>
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Content Vector</label>
               <input
                 name="topic"
                 required
                 defaultValue={initialData?.title || ''}
-                placeholder="What are we writing about?"
-                className="flex h-14 w-full rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all placeholder:text-zinc-600"
+                placeholder="DEFINE TOPIC..."
+                className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">
-                  Tone
-                </label>
+            <div className="space-y-4">
+              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Target Persona</label>
+              <input
+                name="audience"
+                required
+                defaultValue={initialData?.audience || ''}
+                placeholder="ID PERSONA..."
+                className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Vibe</label>
                  <div className="relative group">
                     <select
                     name="tone"
                     defaultValue={initialData?.tone || 'Professional'}
-                    className="flex h-14 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all appearance-none cursor-pointer"
+                    className="flex h-16 w-full items-center justify-between rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all appearance-none cursor-pointer"
                     >
-                    <option value="Professional" className="bg-zinc-900 text-white">Professional</option>
-                    <option value="Funny" className="bg-zinc-900 text-white">Funny</option>
-                    <option value="Casual" className="bg-zinc-900 text-white">Casual</option>
-                    <option value="Educational" className="bg-zinc-900 text-white">Educational</option>
+                    <option value="Professional" className="bg-zinc-950 text-white">PRO</option>
+                    <option value="Funny" className="bg-zinc-950 text-white">SHARP</option>
+                    <option value="Casual" className="bg-zinc-950 text-white">CHILL</option>
+                    <option value="Educational" className="bg-zinc-950 text-white">DEEP</option>
                     </select>
-                    <div className="absolute right-5 top-4.5 pointer-events-none text-zinc-500 group-focus-within:text-indigo-400 transition-colors">
-                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <div className="absolute right-6 top-6 pointer-events-none text-white/20 transition-colors">
+                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                            <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </div>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">
-                  Language
-                </label>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Locale</label>
                  <div className="relative group">
                     <select
                     name="language"
                     defaultValue={initialData?.language || 'English'}
-                    className="flex h-14 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all appearance-none cursor-pointer"
+                    className="flex h-16 w-full items-center justify-between rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all appearance-none cursor-pointer"
                     >
-                    <option value="English" className="bg-zinc-900 text-white font-sans">English</option>
-                    <option value="Tamil" className="bg-zinc-900 text-white font-sans">Tamil</option>
-                    <option value="Hindi" className="bg-zinc-900 text-white font-sans">Hindi</option>
-                    <option value="Spanish" className="bg-zinc-900 text-white font-sans">Spanish</option>
+                    <option value="English" className="bg-zinc-950 text-white">EN</option>
+                    <option value="Tamil" className="bg-zinc-950 text-white">TM</option>
+                    <option value="Hindi" className="bg-zinc-950 text-white">HI</option>
+                    <option value="Spanish" className="bg-zinc-950 text-white">ES</option>
                     </select>
-                    <div className="absolute right-5 top-4.5 pointer-events-none text-zinc-500 group-focus-within:text-indigo-400 transition-colors">
-                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <div className="absolute right-6 top-6 pointer-events-none text-white/20 transition-colors">
+                         <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                            <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">
-                Strategy Framework
-              </label>
-               <div className="relative group">
-                  <select
-                  name="framework"
-                  defaultValue={initialData?.framework || 'AIDA'}
-                  className="flex h-14 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all appearance-none cursor-pointer"
-                  >
-                  <option value="AIDA" className="bg-zinc-900 text-white">AIDA (Attention, Interest, Desire, Action)</option>
-                  <option value="PAS" className="bg-zinc-900 text-white">PAS (Problem, Agitate, Solution)</option>
-                  </select>
-                  <div className="absolute right-5 top-4.5 pointer-events-none text-zinc-500 group-focus-within:text-indigo-400 transition-colors">
-                       <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                  </div>
-              </div>
-            </div>
-
-            {platform === 'YouTube' && (
-              <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-500">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">
-                  Target Duration
-                </label>
-                 <div className="relative group">
-                    <select
-                    name="length"
-                    defaultValue={initialData?.length || 'Medium'}
-                    className="flex h-14 w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all appearance-none cursor-pointer"
-                    >
-                    <option value="Short" className="bg-zinc-900 text-white">Concise (~3 mins)</option>
-                    <option value="Medium" className="bg-zinc-900 text-white">Standard (~8 mins)</option>
-                    <option value="Long" className="bg-zinc-900 text-white">Full (~15 mins+)</option>
-                    </select>
-                    <div className="absolute right-5 top-4.5 pointer-events-none text-zinc-500 group-focus-within:text-indigo-400 transition-colors">
-                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
+            {(platform === 'Instagram' || platform === 'LinkedIn') && (
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Visual Array</label>
+                 <div className="flex h-16 w-full items-center gap-6 rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 transition-all">
+                      <div className="relative flex items-center">
+                        <input 
+                            type="checkbox" 
+                            name="includeVisuals" 
+                            id="includeVisuals"
+                            defaultChecked
+                            className="peer h-6 w-6 cursor-pointer appearance-none rounded-none border border-white/20 bg-transparent checked:border-white transition-all focus:ring-0" 
+                        />
+                         <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none opacity-0 peer-checked:opacity-100 text-white transition-opacity" viewBox="0 0 14 14" fill="none">
+                            <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                         </svg>
+                      </div>
+                      <label htmlFor="includeVisuals" className="text-[10px] text-white/90 font-black uppercase tracking-[0.5em] cursor-pointer select-none">
+                          Render Visual Scenes
+                      </label>
                 </div>
               </div>
             )}
           </div>
 
-            <div className="mt-auto pt-10">
+            <div className="mt-auto pt-12">
                 <SubmitButton />
                 {state?.error && (
-                    <p className="mt-6 text-xs text-red-500 bg-red-500/10 border border-red-500/20 p-4 rounded-xl text-center font-bold animate-in fade-in duration-300">{state.error}</p>
+                    <p className="mt-6 text-[9px] text-red-500 bg-red-500/5 border border-red-500/10 p-5 rounded-none text-center font-black uppercase tracking-[0.3em]">{state.error}</p>
                 )}
             </div>
         </form>
+        
+        {/* Subtle Branding Bottom Sidebar */}
+        <div className="mt-12 opacity-20 hover:opacity-100 transition-opacity">
+            <div className="w-10 h-10 border border-white/40 flex items-center justify-center font-display font-bold text-lg">S</div>
+        </div>
       </div>
 
       {/* RIGHT SIDE: Workspace Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#010103]">
-         <div className="h-20 border-b border-white/5 bg-zinc-950/40 backdrop-blur-3xl px-10 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-5">
-                <div className="flex h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Editor Workspace</div>
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-black relative z-10">
+         <div className="h-28 border-b border-white/5 bg-white/[0.01] backdrop-blur-3xl px-8 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-8">
+                <div className="flex h-2.5 w-2.5 rounded-none bg-white animate-pulse" />
+                <div className="text-[10px] font-display font-bold text-white uppercase tracking-[0.8em] text-gradient">Workspace_</div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+                <AnimatePresence mode="wait">
+                {visuals.length > 0 && (
+                    <motion.button 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        onClick={() => setShowVisuals(!showVisuals)}
+                        className={`inline-flex items-center gap-4 rounded-none border px-10 py-4 text-[9px] font-black uppercase tracking-[0.5em] transition-all ${showVisuals ? 'bg-white text-black border-white' : 'bg-transparent text-white/70 border-white/10 hover:border-white hover:text-white'}`}
+                    >
+                        <ImageIcon className="w-4 h-4" />
+                        {showVisuals ? 'Terminal' : `Storyboard (${visuals.length})`}
+                    </motion.button>
+                )}
+                </AnimatePresence>
+                
                 {currentId && (
                      <button 
                         onClick={handleManualSave}
                         disabled={isSaving}
-                        className="inline-flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-6 py-2.5 text-xs font-bold text-white hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all disabled:opacity-50"
+                        className="inline-flex items-center gap-4 rounded-none border border-white/10 px-10 py-4 text-[9px] font-black uppercase tracking-[0.5em] text-white/70 hover:border-white hover:text-white hover:bg-white/5 transition-all disabled:opacity-50"
                     >
                         {isSaving ? <Loader2 className="w-4 h-4 animate-spin"/> : <Save className="w-4 h-4" />}
-                        Save Changes
+                        Commit
                     </button>
                 )}
+                
                 <button 
                     onClick={handleCopy}
-                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/10 transition-all active:scale-95"
+                    className="inline-flex items-center gap-4 rounded-none bg-white px-10 py-4 text-[9px] font-black uppercase tracking-[0.5em] text-black hover:bg-[#E2E2E2] transition-all active:scale-[0.98]"
                 >
                     <Copy className="w-4 h-4" />
-                    Copy Content
+                    Archive
                 </button>
             </div>
          </div>
-         <div className="flex-1 p-10 overflow-hidden relative">
-             <div className="absolute top-10 left-10 bottom-10 w-[1px] bg-white/5 -z-0" />
-             <div className="absolute top-10 right-10 bottom-10 w-[1px] bg-white/5 -z-0" />
+         
+         <div className="flex-1 p-8 overflow-hidden relative">
+             <div className="absolute top-8 left-8 bottom-8 w-[1px] bg-white/[0.05] -z-0" />
+             <div className="absolute top-8 right-8 bottom-8 w-[1px] bg-white/[0.05] -z-0" />
              
-             <textarea
-                value={content}
-                onChange={handleContentChange}
-                placeholder="Content will appear here..."
-                className="w-full h-full resize-none rounded-3xl border border-white/5 bg-zinc-950/30 p-10 text-zinc-100 placeholder:text-zinc-700 focus:outline-none focus:border-indigo-500/20 transition-all font-sans text-[17px] leading-[1.8] scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent selection:bg-indigo-500/20"
-             />
+             {showVisuals ? (
+                 <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-full h-full overflow-y-auto pr-8 scrollbar-hide"
+                 >
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pb-20">
+                        {visuals.map((prompt, idx) => (
+                            <div key={idx} className="group relative space-y-8 rounded-none border border-white/5 bg-white/[0.01] p-10 transition-all hover:border-white/10">
+                                <div className="aspect-[4/5] w-full rounded-none overflow-hidden bg-zinc-900/50 relative border border-white/5 shadow-2xl">
+                                    <img 
+                                        src={`https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1080&height=1350&seed=${idx + 1337}&model=flux`}
+                                        alt={`Neural Render ${idx + 1}`}
+                                        className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
+                                        loading="lazy"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                                    <div className="absolute inset-x-0 bottom-0 p-10">
+                                        <div className="flex items-center justify-between">
+                                            <span className="bg-white text-black px-6 py-2 text-[8px] font-black uppercase tracking-[0.5em]">Scene_0{idx + 1}</span>
+                                            <div className="h-1.5 w-1.5 bg-white animate-pulse" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="text-[8px] font-black text-white/60 uppercase tracking-[0.5em]">Composition Logic</div>
+                                    <p className="text-[12px] text-white/70 uppercase tracking-[0.2em] leading-relaxed font-medium transition-colors group-hover:text-white">{prompt}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                 </motion.div>
+             ) : (
+                <div className="relative w-full h-full group">
+                    <div className="absolute -top-4 left-6 bg-black px-6 text-[8px] font-black text-white/60 uppercase tracking-[0.8em] z-10 transition-colors group-focus-within:text-white">Terminal_Input</div>
+                    <textarea
+                        value={content}
+                        onChange={handleContentChange}
+                        placeholder="SYSTEM READY. AWAITING INPUT VECTORS..."
+                        className="w-full h-full resize-none rounded-none border border-white/10 bg-transparent p-8 text-white/90 placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all font-sans text-lg tracking-wide leading-[2] scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent selection:bg-white/20"
+                    />
+                </div>
+             )}
              
              {!content && !isPending && (
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none opacity-20">
-                    <Sparkles className="w-20 h-20 text-indigo-400 mb-8 animate-pulse" />
-                    <p className="text-xl font-bold tracking-widest uppercase text-white opacity-40">Create Perfection</p>
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none opacity-[0.05]">
+                    <div className="w-40 h-40 border border-white/20 rotate-45 animate-[spin_20s_linear_infinite] flex items-center justify-center">
+                        <Sparkles className="w-16 h-16 text-white rotate-[-45deg]" />
+                    </div>
+                    <p className="mt-16 text-base font-display font-bold tracking-[1.5em] uppercase text-gradient">ScriptGo</p>
                 </div>
              )}
          </div>
          
-         <div className="h-10 border-t border-white/5 bg-zinc-950/40 px-10 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-zinc-600">
-            <div className="flex gap-8">
-                <span className="flex items-center gap-2">Characters: <span className="text-zinc-400">{content?.length || 0}</span></span>
-                <span className="flex items-center gap-2">Words: <span className="text-zinc-400">{content ? content.trim().split(/\s+/).length : 0}</span></span>
+         <div className="h-14 border-t border-white/5 bg-white/[0.01] px-8 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.6em] text-white/60 overflow-hidden">
+            <div className="flex gap-16">
+                <span className="flex items-center gap-4">B_Index <span className="text-white/70">{content?.length || 0}</span></span>
+                <span className="flex items-center gap-4">V_Count <span className="text-white/70">{content ? content.trim().split(/\s+/).length : 0}</span></span>
+                {visuals.length > 0 && <span className="flex items-center gap-4 text-white">S_Board <span className="text-white animate-pulse">{visuals.length}</span></span>}
             </div>
-            <div className="flex items-center gap-2">
-                Engine: <span className="text-indigo-400/60">ScriptGo-A1</span>
+            <div className="flex items-center gap-4">
+                Core: <span className="text-white/80">PLATINUM_V2_CORE</span>
             </div>
          </div>
       </div>

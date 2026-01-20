@@ -30,38 +30,40 @@ export default function ProfileClient({ email }: { email: string }) {
         <button
             type="submit"
             disabled={isPending}
-            className="group relative inline-flex items-center gap-3 rounded-2xl bg-white/5 border border-indigo-500/30 px-10 py-5 text-sm font-bold text-white shadow-2xl hover:bg-indigo-600 transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0"
+            className="group relative inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-none font-bold text-[11px] uppercase tracking-[0.3em] shadow-2xl hover:bg-[#E2E2E2] transition-all active:scale-[0.98] disabled:opacity-50"
         >
             {isPending ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-                <Mail className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+                <Mail className="h-4 w-4" />
             )}
-            {isPending ? 'Sending...' : 'Send Reset Email'}
-            <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+            {isPending ? 'Processing...' : 'Send Reset Link'}
         </button>
       </form>
-
+ 
       <AnimatePresence>
         {showToast && state && (state.success || state.error) && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className={`fixed bottom-8 right-8 z-[100] px-6 py-4 rounded-[2rem] border backdrop-blur-2xl shadow-2xl flex items-center gap-4 transition-all
-                ${state.success ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className={`fixed bottom-12 right-12 z-[100] px-8 py-6 rounded-none border backdrop-blur-3xl shadow-2xl flex items-center gap-6 transition-all min-w-[320px]
+                ${state.success ? 'border-white/20 bg-black' : 'border-red-500/20 bg-black'}
             `}
           >
-            <div className={`h-10 w-10 rounded-xl flex items-center justify-center
-                ${state.success ? 'bg-emerald-500/20 text-emerald-500' : 'bg-red-500/20 text-red-500'}
-            `}>
-                {state.success ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-            </div>
-            <div className="flex flex-col">
-                <span className="text-sm font-black uppercase tracking-widest leading-none mb-1">
-                    {state.success ? 'Success' : 'Security Alert'}
+            <div className={`h-1.5 w-1.5 animate-pulse
+                ${state.success ? 'bg-white' : 'bg-red-500'}
+            `} />
+            <div className="flex flex-col gap-1">
+                <span className={`text-[11px] font-black uppercase tracking-[0.5em]
+                    ${state.success ? 'text-white' : 'text-red-500'}
+                `}>
+                    {state.success ? 'Success' : 'Error'}
                 </span>
-                <p className="text-xs font-bold text-white/60">{state.success || state.error}</p>
+                <p className="text-[12px] font-bold text-white/40 uppercase tracking-[0.2em] leading-relaxed">{state.success || state.error}</p>
+            </div>
+            <div className="absolute top-0 right-0 p-2 opacity-10">
+                 <div className="text-[9px] font-black uppercase tracking-widest">V2.5</div>
             </div>
           </motion.div>
         )}

@@ -13,40 +13,49 @@ export default async function ChangePasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white font-sans selection:bg-indigo-500/30">
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
-        </div>
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.4]"></div>
+        <div className="fixed top-[-15%] right-[-10%] w-[50vw] h-[50vw] lens-flare pointer-events-none z-0 opacity-40"></div>
+        <div className="fixed bottom-[-15%] left-[-10%] w-[50vw] h-[50vw] lens-flare pointer-events-none z-0 opacity-20"></div>
 
-        <div className="container mx-auto px-6 py-12 max-w-2xl relative z-10">
-            <div className="mb-12 flex items-center justify-between">
-                <Link href="/profile" className="group flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                    <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all">
-                        <ArrowLeft className="w-5 h-5" />
+        <div className="max-w-2xl mx-auto px-4 md:px-8 py-10 relative z-10">
+            {/* Header */}
+            <div className="mb-10">
+                <Link href="/profile" className="group flex items-center gap-4">
+                    <div className="h-9 w-9 rounded-none bg-white border border-white flex items-center justify-center group-hover:bg-[#E2E2E2] transition-all">
+                        <ArrowLeft className="w-3.5 h-3.5 text-black" />
                     </div>
-                    <span className="font-bold text-sm tracking-tight text-white/60 group-hover:text-white">Back to Profile</span>
+                    <div className="space-y-0.5">
+                        <span className="block text-[10px] font-black uppercase tracking-[0.5em] text-white/40 group-hover:text-white/60 transition-colors">Back</span>
+                        <span className="block font-display font-medium text-sm tracking-[0.2em] text-white uppercase">Profile</span>
+                    </div>
                 </Link>
             </div>
 
-            <div className="premium-card p-10 lg:p-14 rounded-[3rem] border-white/5 bg-zinc-950/40 backdrop-blur-2xl">
-                <div className="mb-10 text-center space-y-3">
-                    <div className="h-16 w-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-6">
-                        <ShieldCheck className="w-8 h-8 text-indigo-500" />
+            <div className="relative p-8 lg:p-12 border border-white/5 bg-white/[0.01] backdrop-blur-3xl overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.02] blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                
+                <div className="mb-10 space-y-4 relative z-10">
+                    <div className="inline-flex items-center gap-2.5 px-3.5 py-1 border border-white/10 bg-white/[0.02]">
+                        <div className="h-1 w-1 bg-white animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">Security</span>
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Security Update</h1>
-                    <p className="text-zinc-500 font-medium">Verified update of your account credentials.</p>
+                    <h1 className="text-3xl lg:text-4xl font-display font-semibold tracking-[0.2em] text-gradient uppercase leading-none">
+                        Change Password
+                    </h1>
+                    <p className="text-white/30 font-bold text-[10px] uppercase tracking-[0.2em] max-w-lg leading-relaxed">
+                        Authorized update of your account security credentials.
+                    </p>
                 </div>
 
                 <ChangePasswordForm />
             </div>
 
-            <div className="mt-12 text-center text-zinc-500 text-xs font-medium space-y-2">
-                <p className="flex items-center justify-center gap-2">
-                    <Lock className="w-3 h-3" />
-                    Secure end-to-end encryption
-                </p>
-                <p>ScriptGo Studio Security v2.0</p>
+            {/* Footer Branding */}
+            <div className="mt-16 text-center space-y-4 opacity-30">
+                <div className="h-px w-24 bg-white/10 mx-auto" />
+                <p className="text-[8px] font-black uppercase tracking-[0.4em]">ScriptGo_Security_Module_X2</p>
             </div>
         </div>
     </div>

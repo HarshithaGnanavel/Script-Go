@@ -5,7 +5,12 @@ import OpenAI from 'openai'
 import { revalidatePath } from 'next/cache'
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+  defaultHeaders: {
+    "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL,
+    "X-Title": "ScriptGo",
+  }
 })
 
 export async function generatePlannerScripts(prevState: any, formData: FormData) {
@@ -52,21 +57,55 @@ export async function generatePlannerScripts(prevState: any, formData: FormData)
   console.log('Generating planner scripts for:', { topic, days, platform });
 
   try {
-    const completion = await openai.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: aiPrompt }
-      ],
-      model: 'gpt-4o',
-      response_format: { type: 'json_object' },
-    })
+    let result;
+    try {
+      // 1. Primary: Gemini 2.0 Flash (Free)
+      result = await openai.chat.completions.create({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: aiPrompt }
+        ],
+        model: 'google/gemini-2.0-flash-exp:free',
+        response_format: { type: 'json_object' },
+      });
+    } catch (e: any) {
+      if (e.status === 429 || e.status === 404) {
+        console.log("Primary model busy in Planner, trying Fallback 1 (Gemini 1.5 Flash)...");
+        try {
+          // 2. Fallback 1: Gemini 1.5 Flash (Free)
+          result = await openai.chat.completions.create({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: aiPrompt }
+            ],
+            model: 'google/gemini-flash-1.5-exp:free',
+            response_format: { type: 'json_object' },
+          });
+        } catch (e2: any) {
+          console.log("Fallback 1 busy in Planner, trying Fallback 2 (Llama 3.1 8B)...");
+          // 3. Fallback 2: Llama 3.1 8B (Free)
+          // Note: Llama 3.1 8B might not support strict JSON mode, so we append instruction
+          result = await openai.chat.completions.create({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: aiPrompt + " Return ONLY the raw JSON object." }
+            ],
+            model: 'meta-llama/llama-3.1-8b-instruct:free',
+          });
+        }
+      } else {
+        throw e;
+      }
+    }
 
-    const rawResponse = completion.choices[0].message.content || ''
+    const rawResponse = result.choices[0].message.content || ''
     console.log('AI Response received');
 
     let data;
     try {
-      data = JSON.parse(rawResponse);
+      // Clean up potential markdown code blocks if the model didn't follow JSON mode
+      const cleanJson = rawResponse.replace(/```json\n?|```/g, '').trim();
+      data = JSON.parse(cleanJson);
     } catch (e) {
       console.error('JSON Parse Error:', e, rawResponse);
       throw new Error('Failed to parse AI response as JSON');
@@ -105,9 +144,6 @@ export async function generatePlannerScripts(prevState: any, formData: FormData)
 
     if (insertError) {
       console.error('DB Insert Error:', insertError);
-      if (insertError.message.includes('column "scheduled_date" does not exist')) {
-        return { error: 'Database needs update. Please run the SQL command to add "scheduled_date" column.', success: false };
-      }
       throw insertError;
     }
 

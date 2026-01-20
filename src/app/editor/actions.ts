@@ -6,7 +6,12 @@ import { revalidatePath } from 'next/cache'
 import { sendScriptEmail } from '@/lib/email'
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+  defaultHeaders: {
+    "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL,
+    "X-Title": "ScriptGo",
+  }
 })
 
 export async function generateScript(prevState: any, formData: FormData) {
@@ -24,66 +29,114 @@ export async function generateScript(prevState: any, formData: FormData) {
   const framework = formData.get('framework') as string || 'AIDA'
   const length = formData.get('length') as string
   const existingId = formData.get('id') as string
+  const targetAudience = formData.get('audience') as string
 
   if (!topic || !platform || !tone) {
     return { error: 'Please fill in all fields', success: false, content: '', id: '' }
   }
 
-  const frameworkDescription = framework === 'AIDA'
-    ? 'AIDA (Attention, Interest, Desire, Action)'
-    : 'PAS (Problem, Agitate, Solve)'
-
-  const systemPrompt = `You are a world-class content strategist and professional script writer. 
-  You specialize in creating high-conversion, viral content for social media.
-  You are fluent in multiple languages and understand cultural nuances, slang, and professional etiquette in each.
-  Your goal is to write content that sounds like it was written by a native speaker.`;
+  const systemPrompt = `### ROLE & OBJECTIVE 
+  You are an expert Content Creator and Social Media Strategist with 10 years of experience. 
+  Your goal is to write high-converting, viral content tailored to specific platforms. 
+  
+  ### TONE & STYLE GUIDELINES (CRITICAL) 
+  1. **No Textbook Language:** Never use formal, written-style language. Use conversational, spoken dialect. 
+     - If Language is Tamil/Hindi/Telugu/Spanish: Use colloquial mixes (e.g., "Tanglish" or "Hinglish").
+  2. **No Fluff:** Do not use words like "In today's digital world". Start immediately with value. 
+  3. **No Meta-Labels:** Do not output headers like "Hook:", "Body:". Just write the content directly.
+  `;
 
   let aiPrompt = ''
+
   if (platform === 'LinkedIn') {
-    aiPrompt = `Write a high-engaging LinkedIn post about "${topic}" entirely in the ${language} language.
-    
-    CRITICAL INSTRUCTIONS:
-    1. Use the NATIVE SCRIPT of ${language} (e.g., Devanagari for Hindi, Tamil script for Tamil). Do NOT use English transliteration.
-    2. Tone: ${tone}.
-    3. Marketing Framework: ${frameworkDescription}.
-    4. Structure:
-       - Viral Hook (Stop the scroll)
-       - Body following the ${framework} framework
-       - Clear, compelling Call to Action
-       - 3-5 relevant hashtags in ${language}
-    
-    Ensure the phrasing is natural, modern, and sounds like a native human expert in the topic.`
+    const includeVisuals = formData.get('includeVisuals') === 'on'
+
+    aiPrompt = `### INPUT DATA 
+     - **Topic:** ${topic} 
+     - **Target Audience:** ${targetAudience} 
+     - **Platform:** LinkedIn Post 
+     
+     ### PLATFORM SPECIFIC RULES (LINKEDIN POST)
+     - Structure: 1. Hook, 2. Story (Broetry style), 3. Bullet Lesson, 4. Question.
+     ${includeVisuals ? '- **Visuals Required:** For each main section, provide a detailed image description in this EXACT format: [IMAGE_PROMPT: cinematic photography of ...] followed by the text.' : ''}
+     - Tone: ${tone}, Professional but personal. No emojis in first 2 lines.
+
+     ### GENERATE CONTENT NOW 
+     Write the content for ${topic} focusing on ${targetAudience}.`
+
+  } else if (platform === 'Instagram') {
+    const includeVisuals = formData.get('includeVisuals') === 'on'
+
+    aiPrompt = `### INPUT DATA 
+     - **Topic:** ${topic} 
+     - **Target Audience:** ${targetAudience} 
+     - **Platform:** Instagram Reels
+
+     ### PLATFORM SPECIFIC RULES (INSTAGRAM REELS)
+     - Structure: 1. Visual Hook, 2. Audio Hook, 3. The Meat (3 points), 4. CTA.
+     ${includeVisuals ? '- **Visuals Required:** FOR EVERY POINT, you MUST provide an image description in this EXACT format: [IMAGE_PROMPT: vibrant aesthetic shot of ...] right before the spoken text.' : ''}
+     - Format: Vertical video script format. 
+     - Add 15-20 viral hashtags at the end.
+
+     ### GENERATE CONTENT NOW 
+     Write the content for ${topic} focusing on ${targetAudience}.`
+
   } else {
-    aiPrompt = `Write a comprehensive YouTube script about "${topic}" entirely in the ${language} language.
-    
-    CRITICAL INSTRUCTIONS:
-    1. Use the NATIVE SCRIPT of ${language} (e.g., Devanagari for Hindi, Tamil script for Tamil). Do NOT use English transliteration.
-    2. Tone: ${tone}.
-    3. Target Duration: ${length || 'Medium'}.
-    4. Marketing Framework: ${frameworkDescription}.
-    5. Structure:
-       - High-retention Hook
-       - Engaging Intro
-       - Detailed segments following the ${framework} framework
-       - Outro + strong CTA
-    
-    Ensure the content is plausible, factually grounded, and uses authentic ${language} idioms and phrasing.`
+    aiPrompt = `### INPUT DATA 
+     - **Topic:** ${topic} 
+     - **Target Audience:** ${targetAudience} 
+     - **Platform:** YouTube Video
+      
+     ### PLATFORM SPECIFIC RULES (YOUTUBE VIDEO)
+     - Structure: 1. Teaser, 2. Intro, 3. Step-by-step deep dive, 4. Conclusion.
+     - Tone: ${tone}, Educational and authoritative.
+
+     ### GENERATE CONTENT NOW 
+     Write the content for ${topic} focusing on ${targetAudience}.`
   }
 
   try {
-    const completion = await openai.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: aiPrompt }
-      ],
-      model: 'gpt-4o',
-      temperature: 0.8,
-    })
+    let result;
+    try {
+      // 1. Primary: Gemini 2.0 Flash (Free)
+      result = await openai.chat.completions.create({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: aiPrompt }
+        ],
+        model: 'google/gemini-2.0-flash-exp:free',
+      });
+    } catch (e: any) {
+      if (e.status === 429 || e.status === 404) {
+        console.log("Primary model busy, trying Fallback 1 (Gemini 1.5 Flash)...");
+        try {
+          // 2. Fallback 1: Gemini 1.5 Flash (Free)
+          result = await openai.chat.completions.create({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: aiPrompt }
+            ],
+            model: 'google/gemini-flash-1.5-exp:free',
+          });
+        } catch (e2: any) {
+          console.log("Fallback 1 busy, trying Fallback 2 (Llama 3.1 8B)...");
+          // 3. Fallback 2: Llama 3.1 8B (Free - Very stable)
+          result = await openai.chat.completions.create({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: aiPrompt }
+            ],
+            model: 'meta-llama/llama-3.1-8b-instruct:free',
+          });
+        }
+      } else {
+        throw e;
+      }
+    }
 
-    const content = completion.choices[0].message.content || ''
+    const content = result.choices[0].message.content || ''
 
     if (existingId && existingId !== 'undefined' && existingId !== '') {
-      // Update existing
       const { error: updateError } = await supabase
         .from('scripts')
         .update({
@@ -99,16 +152,11 @@ export async function generateScript(prevState: any, formData: FormData) {
         .eq('user_id', user.id)
 
       if (updateError) throw updateError
-
-      // Send script email
-      if (user.email) {
-        await sendScriptEmail(user.email, topic, content)
-      }
+      if (user.email) await sendScriptEmail(user.email, topic, content)
 
       revalidatePath('/dashboard')
       return { success: true, content, id: existingId, error: null }
     } else {
-      // Create new
       const { data, error: insertError } = await supabase
         .from('scripts')
         .insert({
@@ -125,11 +173,7 @@ export async function generateScript(prevState: any, formData: FormData) {
         .single()
 
       if (insertError) throw insertError
-
-      // Send script email
-      if (user.email) {
-        await sendScriptEmail(user.email, topic, content)
-      }
+      if (user.email) await sendScriptEmail(user.email, topic, content)
 
       revalidatePath('/dashboard')
       return { success: true, content, id: data.id, error: null }
@@ -144,7 +188,6 @@ export async function generateScript(prevState: any, formData: FormData) {
 export async function saveScript(id: string, content: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) return { error: 'Unauthorized' }
 
   const { error } = await supabase
@@ -154,7 +197,6 @@ export async function saveScript(id: string, content: string) {
     .eq('user_id', user.id)
 
   if (error) return { error: error.message }
-
   revalidatePath('/dashboard')
   revalidatePath('/editor')
   return { success: true }

@@ -50,7 +50,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
   
   const router = useRouter()
   
-  const [state, formAction] = useActionState(async (state: any, formData: FormData) => {
+  const [state, formAction, isPendingState] = useActionState(async (state: any, formData: FormData) => {
     setIsGenerating(true)
     try {
       const result = await generatePlannerScripts(state, formData)
@@ -98,10 +98,10 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
     <div className="min-h-screen bg-[#020617] text-foreground font-sans selection:bg-indigo-500/20">
       {/* Professional Header */}
       <header className="border-b border-white/5 bg-zinc-950/40 backdrop-blur-xl sticky top-0 z-40">
-        <div className="container mx-auto flex h-20 items-center justify-between px-6">
+        <div className="max-w-[1400px] mx-auto flex h-20 items-center justify-between px-4">
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="group rounded-2xl p-3 bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all">
-              <ChevronLeft className="h-5 w-5 text-zinc-400 group-hover:text-indigo-400 transition-colors" />
+              <ChevronLeft className="h-5 w-5 text-zinc-200 group-hover:text-indigo-400 transition-colors" />
             </Link>
             <div className="flex items-center gap-4 group cursor-pointer">
               <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
@@ -122,14 +122,14 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
             </button>
             <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block" />
             <div className="hidden lg:flex flex-col items-end">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Active Workspace</span>
-                <span className="text-xs text-zinc-300 font-medium">{userEmail}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">Active Workspace</span>
+                <span className="text-xs text-zinc-100 font-medium">{userEmail}</span>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-16 max-w-7xl">
+      <main className="max-w-[1400px] mx-auto px-4 py-16">
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* Calendar Sidebar */}
@@ -144,18 +144,18 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
 
             <div className="p-8 rounded-[2rem] border border-white/5 bg-zinc-950/40 backdrop-blur-xl space-y-8 premium-card shadow-2xl">
                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xl text-white">{monthNames[month]} <span className="text-zinc-500 font-medium">{year}</span></h3>
+                  <h3 className="font-bold text-xl text-white">{monthNames[month]} <span className="text-zinc-300 font-medium">{year}</span></h3>
                   <div className="flex gap-2">
                     <button onClick={prevMonth} className="p-2.5 hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/5">
-                      <ChevronLeft className="w-5 h-5 text-zinc-400" />
+                      <ChevronLeft className="w-5 h-5 text-zinc-200" />
                     </button>
                     <button onClick={nextMonth} className="p-2.5 hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/5">
-                      <ChevronRight className="w-5 h-5 text-zinc-400" />
+                      <ChevronRight className="w-5 h-5 text-zinc-200" />
                     </button>
                   </div>
                </div>
                
-               <div className="grid grid-cols-7 gap-2 text-center text-[9px] font-bold text-zinc-500 uppercase tracking-widest">
+               <div className="grid grid-cols-7 gap-2 text-center text-[9px] font-bold text-zinc-300 uppercase tracking-widest">
                   {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={`${d}-${i}`}>{d}</div>)}
                </div>
                
@@ -178,17 +178,17 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
             </div>
 
             <div className="rounded-[2rem] border border-white/5 bg-zinc-950/40 p-8 space-y-6 premium-card">
-               <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500">Performance Metrics</h4>
+               <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-300">Performance Metrics</h4>
                <div className="grid grid-cols-1 gap-6">
                   <div className="flex justify-between items-center group">
-                    <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Planned Content</p>
+                    <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Planned Content</p>
                     <p className="text-2xl font-black text-white group-hover:text-indigo-400 transition-colors">{initialScripts.length}</p>
                   </div>
                   <div className="h-px w-full bg-white/5" />
                   <div className="flex justify-between items-center group">
                     <div className="flex items-center gap-2">
                         <BarChart3 className="w-3.5 h-3.5 text-indigo-500" />
-                        <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Success Rate</p>
+                        <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Success Rate</p>
                     </div>
                     <p className="text-2xl font-black text-indigo-500">100%</p>
                   </div>
@@ -234,7 +234,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400 mb-2">
                                  {day} {monthNames[month].slice(0,3)} {year}
                                </span>
-                               <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                               <span className="text-xs font-bold text-zinc-100 uppercase tracking-widest">
                                  {dayScripts.length} Asset{dayScripts.length > 1 ? 's' : ''}
                                </span>
                              </div>
@@ -252,9 +252,9 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                                >
                                  <div className="flex items-center gap-3 mb-2">
                                     <div className={cn("h-1.5 w-1.5 rounded-full", script.platform === 'LinkedIn' ? "bg-blue-500" : "bg-red-500")} />
-                                    <span className="text-[9px] font-bold text-zinc-600 group-hover/asset:text-zinc-500 uppercase tracking-widest transition-colors">{script.platform}</span>
+                                    <span className="text-[9px] font-bold text-zinc-400 group-hover/asset:text-zinc-300 uppercase tracking-widest transition-colors">{script.platform}</span>
                                  </div>
-                                 <h5 className="text-sm font-bold line-clamp-2 text-zinc-400 group-hover/asset:text-white transition-colors leading-relaxed">{script.title}</h5>
+                                 <h5 className="text-sm font-bold line-clamp-2 text-zinc-200 group-hover/asset:text-white transition-colors leading-relaxed">{script.title}</h5>
                                </button>
                              ))}
                           </div>
@@ -270,8 +270,8 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
             <div className="space-y-10">
               <div className="flex items-center justify-between">
                  <div className="flex items-center gap-6">
-                    <CalendarIcon className="w-8 h-8 text-zinc-800" />
-                    <h2 className="text-3xl font-bold tracking-tight uppercase text-zinc-500">{monthNames[month]} Overview</h2>
+                    <CalendarIcon className="w-8 h-8 text-zinc-600" />
+                    <h2 className="text-3xl font-bold tracking-tight uppercase text-zinc-200">{monthNames[month]} Overview</h2>
                  </div>
               </div>
 
@@ -318,7 +318,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                               </button>
                             ))
                           ) : (
-                            <div className="flex flex-col items-center justify-center h-24 text-zinc-800 font-bold uppercase tracking-[0.3em] text-[10px]">
+                            <div className="flex flex-col items-center justify-center h-24 text-zinc-600 font-bold uppercase tracking-[0.3em] text-[10px]">
                               Open Slot
                             </div>
                           )}
@@ -361,8 +361,8 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                     <h3 className="font-bold text-2xl tracking-tight text-white">{selectedScript.title}</h3>
                     <div className="flex items-center gap-4">
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400">{selectedScript.scheduled_date}</span>
-                        <span className="h-1 w-1 rounded-full bg-zinc-800" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">{selectedScript.tone} Tone</span>
+                        <span className="h-1 w-1 rounded-full bg-zinc-600" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">{selectedScript.tone} Tone</span>
                     </div>
                    </div>
                 </div>
@@ -413,13 +413,13 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                 </div>
                 <div>
                   <h3 className="text-3xl font-bold tracking-tight text-white uppercase">Content Strategist</h3>
-                  <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">Generate multi-day campaign blueprints</p>
+                  <p className="text-zinc-300 font-bold text-xs uppercase tracking-widest">Generate multi-day campaign blueprints</p>
                 </div>
               </div>
 
               <form action={formAction} className="space-y-10 relative">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Primary Niche</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 ml-1">Primary Niche</label>
                   <input 
                     name="topic"
                     required
@@ -519,7 +519,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                     type="button"
                     onClick={() => setIsModalOpen(false)}
                     disabled={isGenerating}
-                    className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-white border border-white/5"
+                    className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all text-xs font-bold uppercase tracking-widest text-zinc-300 hover:text-white border border-white/5"
                   >
                     Cancel
                   </button>
