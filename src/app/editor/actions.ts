@@ -107,26 +107,26 @@ export async function generateScript(prevState: any, formData: FormData) {
         model: 'google/gemini-2.0-flash-exp:free',
       });
     } catch (e: any) {
-      if (e.status === 429 || e.status === 404) {
-        console.log("Primary model busy, trying Fallback 1 (Gemini 1.5 Flash)...");
+      if (e.status === 429 || e.status === 404 || e.status === 403) {
+        console.log("Primary model busy or unavailable, trying Fallback 1 (Llama 3.3 70B)...");
         try {
-          // 2. Fallback 1: Gemini 1.5 Flash (Free)
+          // 2. Fallback 1: Llama 3.3 70B (Free) - High quality
           result = await openai.chat.completions.create({
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: aiPrompt }
             ],
-            model: 'google/gemini-flash-1.5-exp:free',
+            model: 'meta-llama/llama-3.3-70b-instruct:free',
           });
         } catch (e2: any) {
-          console.log("Fallback 1 busy, trying Fallback 2 (Llama 3.1 8B)...");
-          // 3. Fallback 2: Llama 3.1 8B (Free - Very stable)
+          console.log("Fallback 1 busy, trying Fallback 2 (Llama 3.2 3B)...");
+          // 3. Fallback 2: Llama 3.2 3B (Free) - Fast backup
           result = await openai.chat.completions.create({
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: aiPrompt }
             ],
-            model: 'meta-llama/llama-3.1-8b-instruct:free',
+            model: 'meta-llama/llama-3.2-3b-instruct:free',
           });
         }
       } else {

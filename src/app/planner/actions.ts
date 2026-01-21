@@ -69,28 +69,27 @@ export async function generatePlannerScripts(prevState: any, formData: FormData)
         response_format: { type: 'json_object' },
       });
     } catch (e: any) {
-      if (e.status === 429 || e.status === 404) {
-        console.log("Primary model busy in Planner, trying Fallback 1 (Gemini 1.5 Flash)...");
+      if (e.status === 429 || e.status === 404 || e.status === 403) {
+        console.log("Primary model busy in Planner, trying Fallback 1 (Llama 3.3 70B)...");
         try {
-          // 2. Fallback 1: Gemini 1.5 Flash (Free)
+          // 2. Fallback 1: Llama 3.3 70B (Free)
           result = await openai.chat.completions.create({
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: aiPrompt }
             ],
-            model: 'google/gemini-flash-1.5-exp:free',
+            model: 'meta-llama/llama-3.3-70b-instruct:free',
             response_format: { type: 'json_object' },
           });
         } catch (e2: any) {
-          console.log("Fallback 1 busy in Planner, trying Fallback 2 (Llama 3.1 8B)...");
-          // 3. Fallback 2: Llama 3.1 8B (Free)
-          // Note: Llama 3.1 8B might not support strict JSON mode, so we append instruction
+          console.log("Fallback 1 busy in Planner, trying Fallback 2 (Llama 3.2 3B)...");
+          // 3. Fallback 2: Llama 3.2 3B (Free)
           result = await openai.chat.completions.create({
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: aiPrompt + " Return ONLY the raw JSON object." }
             ],
-            model: 'meta-llama/llama-3.1-8b-instruct:free',
+            model: 'meta-llama/llama-3.2-3b-instruct:free',
           });
         }
       } else {
