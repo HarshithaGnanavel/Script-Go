@@ -140,9 +140,9 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                   onChange={(e) => setPlatform(e.target.value)}
                   className="flex h-16 w-full items-center justify-between rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all appearance-none cursor-pointer"
                   >
-                  <option value="LinkedIn" className="bg-zinc-950 text-white">LinkedIn Intel</option>
-                  <option value="Instagram" className="bg-zinc-950 text-white">Instagram Burst</option>
-                  <option value="YouTube" className="bg-zinc-950 text-white">YouTube Stream</option>
+                  <option value="LinkedIn" className="bg-zinc-950 text-white">LinkedIn</option>
+                  <option value="Instagram" className="bg-zinc-950 text-white">Instagram</option>
+                  <option value="YouTube" className="bg-zinc-950 text-white">YouTube</option>
                   </select>
                   <div className="absolute right-6 top-6 pointer-events-none text-white/20 transition-colors">
                       <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
