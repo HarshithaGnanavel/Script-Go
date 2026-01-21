@@ -47,10 +47,7 @@ export async function generateScript(prevState: any, formData: FormData) {
   `;
 
   let aiPrompt = ''
-
   if (platform === 'LinkedIn') {
-    const includeVisuals = formData.get('includeVisuals') === 'on'
-
     aiPrompt = `### INPUT DATA 
      - **Topic:** ${topic} 
      - **Target Audience:** ${targetAudience} 
@@ -58,15 +55,12 @@ export async function generateScript(prevState: any, formData: FormData) {
      
      ### PLATFORM SPECIFIC RULES (LINKEDIN POST)
      - Structure: 1. Hook, 2. Story (Broetry style), 3. Bullet Lesson, 4. Question.
-     ${includeVisuals ? '- **Visuals Required:** For each main section, provide a detailed image description in this EXACT format: [IMAGE_PROMPT: cinematic photography of ...] followed by the text.' : ''}
      - Tone: ${tone}, Professional but personal. No emojis in first 2 lines.
 
      ### GENERATE CONTENT NOW 
      Write the content for ${topic} focusing on ${targetAudience}.`
 
   } else if (platform === 'Instagram') {
-    const includeVisuals = formData.get('includeVisuals') === 'on'
-
     aiPrompt = `### INPUT DATA 
      - **Topic:** ${topic} 
      - **Target Audience:** ${targetAudience} 
@@ -74,7 +68,6 @@ export async function generateScript(prevState: any, formData: FormData) {
 
      ### PLATFORM SPECIFIC RULES (INSTAGRAM REELS)
      - Structure: 1. Visual Hook, 2. Audio Hook, 3. The Meat (3 points), 4. CTA.
-     ${includeVisuals ? '- **Visuals Required:** FOR EVERY POINT, you MUST provide an image description in this EXACT format: [IMAGE_PROMPT: vibrant aesthetic shot of ...] right before the spoken text.' : ''}
      - Format: Vertical video script format. 
      - Add 15-20 viral hashtags at the end.
 
