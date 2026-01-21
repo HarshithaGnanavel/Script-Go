@@ -132,7 +132,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
             
           <div className="space-y-10">
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Network Protocol</label>
+              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Platform</label>
               <div className="relative group">
                   <select
                   name="platform"
@@ -153,7 +153,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Content Vector</label>
+              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Topic</label>
               <input
                 name="topic"
                 required
@@ -164,7 +164,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Target Persona</label>
+              <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Audience</label>
               <input
                 name="audience"
                 required
@@ -176,7 +176,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
 
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Vibe</label>
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Tone</label>
                  <div className="relative group">
                     <select
                     name="tone"
@@ -197,7 +197,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Locale</label>
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Language</label>
                  <div className="relative group">
                     <select
                     name="language"
@@ -264,20 +264,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                 <div className="text-[10px] font-display font-bold text-white uppercase tracking-[0.8em] text-gradient">Workspace_</div>
             </div>
             <div className="flex items-center gap-6">
-                <AnimatePresence mode="wait">
-                {visuals.length > 0 && (
-                    <motion.button 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        onClick={() => setShowVisuals(!showVisuals)}
-                        className={`inline-flex items-center gap-4 rounded-none border px-10 py-4 text-[9px] font-black uppercase tracking-[0.5em] transition-all ${showVisuals ? 'bg-white text-black border-white' : 'bg-transparent text-white/70 border-white/10 hover:border-white hover:text-white'}`}
-                    >
-                        <ImageIcon className="w-4 h-4" />
-                        {showVisuals ? 'Terminal' : `Storyboard (${visuals.length})`}
-                    </motion.button>
-                )}
-                </AnimatePresence>
+
                 
                 {currentId && (
                      <button 
@@ -286,7 +273,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                         className="inline-flex items-center gap-4 rounded-none border border-white/10 px-10 py-4 text-[9px] font-black uppercase tracking-[0.5em] text-white/70 hover:border-white hover:text-white hover:bg-white/5 transition-all disabled:opacity-50"
                     >
                         {isSaving ? <Loader2 className="w-4 h-4 animate-spin"/> : <Save className="w-4 h-4" />}
-                        Commit
+                        Save
                     </button>
                 )}
                 
@@ -295,7 +282,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                     className="inline-flex items-center gap-4 rounded-none bg-white px-10 py-4 text-[9px] font-black uppercase tracking-[0.5em] text-black hover:bg-[#E2E2E2] transition-all active:scale-[0.98]"
                 >
                     <Copy className="w-4 h-4" />
-                    Archive
+                    Copy
                 </button>
             </div>
          </div>
@@ -323,7 +310,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
                                     <div className="absolute inset-x-0 bottom-0 p-10">
                                         <div className="flex items-center justify-between">
-                                            <span className="bg-white text-black px-6 py-2 text-[8px] font-black uppercase tracking-[0.5em]">Scene_0{idx + 1}</span>
+                                            <span className="bg-white text-black px-6 py-2 text-[8px] font-black uppercase tracking-[0.5em]">Visual 0{idx + 1}</span>
                                             <div className="h-1.5 w-1.5 bg-white animate-pulse" />
                                         </div>
                                     </div>
@@ -338,7 +325,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                  </motion.div>
              ) : (
                 <div className="relative w-full h-full group">
-                    <div className="absolute -top-4 left-6 bg-black px-6 text-[8px] font-black text-white/60 uppercase tracking-[0.8em] z-10 transition-colors group-focus-within:text-white">Terminal_Input</div>
+                    <div className="absolute -top-4 left-6 bg-black px-6 text-[8px] font-black text-white/60 uppercase tracking-[0.8em] z-10 transition-colors group-focus-within:text-white">Editor</div>
                     <textarea
                         value={content}
                         onChange={handleContentChange}
@@ -358,16 +345,12 @@ export default function EditorClient({ initialData }: { initialData: any }) {
              )}
          </div>
          
-         <div className="h-14 border-t border-white/5 bg-white/[0.01] px-8 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.6em] text-white/60 overflow-hidden">
+          <div className="h-14 border-t border-white/5 bg-white/[0.01] px-8 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.6em] text-white/60 overflow-hidden">
             <div className="flex gap-16">
                 <span className="flex items-center gap-4">B_Index <span className="text-white/70">{content?.length || 0}</span></span>
                 <span className="flex items-center gap-4">V_Count <span className="text-white/70">{content ? content.trim().split(/\s+/).length : 0}</span></span>
-                {visuals.length > 0 && <span className="flex items-center gap-4 text-white">S_Board <span className="text-white animate-pulse">{visuals.length}</span></span>}
             </div>
-            <div className="flex items-center gap-4">
-                Core: <span className="text-white/80">PLATINUM_V2_CORE</span>
-            </div>
-         </div>
+          </div>
       </div>
     </div>
   )
