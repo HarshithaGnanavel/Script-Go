@@ -75,17 +75,17 @@ function LoginForm() {
                     {mode === 'reset-password' && 'New Password'}
                 </h1>
                 <p className="text-zinc-600 text-sm font-medium">
-                    {mode === 'signin' && "Enter your credentials to access your workspace."}
-                    {mode === 'signup' && "Join the ScriptGo community today."}
-                    {mode === 'forgot-password' && "Enter your email to receive a reset link."}
-                    {mode === 'reset-password' && "Enter your new secure password below."}
+                    {mode === 'signin' && "Enter your email and password to sign in."}
+                    {mode === 'signup' && "Sign up to start creating content."}
+                    {mode === 'forgot-password' && "We'll send you a link to reset your password."}
+                    {mode === 'reset-password' && "Enter your new password below."}
                 </p>
             </header>
 
             <form action={formAction} className="w-full space-y-5">
                 {(mode !== 'reset-password') && (
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Work Email</label>
+                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
                         <div className="relative group/input">
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within/input:text-indigo-600 transition-colors" />
                             <input

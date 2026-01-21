@@ -118,7 +118,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
               className="group relative inline-flex items-center gap-3 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-xl shadow-indigo-600/20 hover:bg-indigo-500 transition-all hover:-translate-y-1 active:scale-95"
             >
               <Target className="h-4 w-4" />
-              Plan Strategy
+              Create Plan
             </button>
             <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block" />
             <div className="hidden lg:flex flex-col items-end">
@@ -139,7 +139,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                 <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Content Calendar</span>
               </div>
-              <h2 className="text-4xl font-bold tracking-tight text-white">Review <span className="text-brand">Timeline</span></h2>
+              <h2 className="text-4xl font-bold tracking-tight text-white">Your <span className="text-brand">Schedule</span></h2>
             </div>
 
             <div className="p-8 rounded-[2rem] border border-white/5 bg-zinc-950/40 backdrop-blur-xl space-y-8 premium-card shadow-2xl">
@@ -181,7 +181,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-300">Performance Metrics</h4>
                <div className="grid grid-cols-1 gap-6">
                   <div className="flex justify-between items-center group">
-                    <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Planned Content</p>
+                    <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Planned Scripts</p>
                     <p className="text-2xl font-black text-white group-hover:text-indigo-400 transition-colors">{initialScripts.length}</p>
                   </div>
                   <div className="h-px w-full bg-white/5" />
@@ -206,7 +206,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                   <div className="h-12 w-12 rounded-[1.25rem] bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 shadow-xl shadow-indigo-500/5">
                     <Clock className="w-6 h-6 text-indigo-400" />
                   </div>
-                  <h2 className="text-3xl font-bold tracking-tight text-white uppercase">Content <span className="text-brand">Pipeline</span></h2>
+                  <h2 className="text-3xl font-bold tracking-tight text-white uppercase">Upcoming <span className="text-brand">Scripts</span></h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent" />
                 </div>
                 
@@ -235,7 +235,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                                  {day} {monthNames[month].slice(0,3)} {year}
                                </span>
                                <span className="text-xs font-bold text-zinc-100 uppercase tracking-widest">
-                                 {dayScripts.length} Asset{dayScripts.length > 1 ? 's' : ''}
+                                 {dayScripts.length} Script{dayScripts.length > 1 ? 's' : ''}
                                </span>
                              </div>
                              {isToday && (
@@ -412,14 +412,14 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                   <Sparkles className="w-9 h-9 text-indigo-500" />
                 </div>
                 <div>
-                  <h3 className="text-3xl font-bold tracking-tight text-white uppercase">Content Strategist</h3>
-                  <p className="text-zinc-300 font-bold text-xs uppercase tracking-widest">Generate multi-day campaign blueprints</p>
+                  <h3 className="text-3xl font-bold tracking-tight text-white uppercase">Plan Generator</h3>
+                  <p className="text-zinc-300 font-bold text-xs uppercase tracking-widest">Create a multi-day script plan</p>
                 </div>
               </div>
 
               <form action={formAction} className="space-y-10 relative">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 ml-1">Primary Niche</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 ml-1">Topic</label>
                   <input 
                     name="topic"
                     required
@@ -441,14 +441,14 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                     </select>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Campaign Length</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Days to Plan</label>
                     <select name="days" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
                       <option value="7" className="bg-zinc-900 text-white font-sans">7-Day Sprint</option>
                       <option value="30" className="bg-zinc-900 text-white font-sans">30-Day Strategy</option>
                     </select>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Framework</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Strategy</label>
                     <select name="framework" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
                       <option value="AIDA" className="bg-zinc-900 text-white font-sans">AIDA Framework</option>
                       <option value="PAS" className="bg-zinc-900 text-white font-sans">PAS Framework</option>
@@ -456,7 +456,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Target Language</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Language</label>
                     <select name="language" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
                       <option value="English" className="bg-zinc-900 text-white font-sans">English</option>
                       <option value="Tamil" className="bg-zinc-900 text-white font-sans">Tamil</option>
@@ -465,7 +465,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                     </select>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Communication Tone</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Tone</label>
                     <select name="tone" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
                       <option value="Professional" className="bg-zinc-900 text-white font-sans">Professional</option>
                       <option value="Casual" className="bg-zinc-900 text-white font-sans">Casual</option>
@@ -474,7 +474,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                     </select>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Campaign Start</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Start Date</label>
                     <input 
                       type="date"
                       name="startDate"
@@ -511,7 +511,7 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
                     ) : (
                       <>
                         <Sparkles className="w-5 h-5 group-hover/btn:scale-125 transition-transform" />
-                        Generate Campaign
+                        Generate Plan
                       </>
                     )}
                   </button>
