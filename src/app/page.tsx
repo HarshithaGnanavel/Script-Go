@@ -30,7 +30,7 @@ const TypewriterText = ({ text, delay = 0 }: { text: string; delay?: number }) =
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col h-screen relative font-sans text-white overflow-hidden bg-black selection:bg-[#8b5cf6]/30">
+    <div className="flex flex-col h-dvh relative font-sans text-white overflow-hidden bg-black selection:bg-[#8b5cf6]/30">
       {/* Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.6]"></div>
       <div className="fixed top-[-15%] right-[-10%] w-[70vw] h-[70vw] lens-flare pointer-events-none z-0 opacity-80"></div>

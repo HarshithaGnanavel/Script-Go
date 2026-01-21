@@ -26,7 +26,7 @@ function LoginForm() {
   )
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4 md:p-8 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-dvh bg-[#020617] flex items-center justify-center p-4 md:p-8 font-sans selection:bg-indigo-500/30">
       {/* Background Abstract Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[120px] rounded-full" />

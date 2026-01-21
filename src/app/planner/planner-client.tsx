@@ -95,459 +95,491 @@ export default function PlannerClient({ initialScripts, userEmail }: PlannerClie
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-foreground font-sans selection:bg-indigo-500/20">
-      {/* Professional Header */}
-      <header className="border-b border-white/5 bg-zinc-950/40 backdrop-blur-xl sticky top-0 z-40">
-        <div className="max-w-[1400px] mx-auto flex h-20 items-center justify-between px-4">
-          <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="group rounded-2xl p-3 bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all">
-              <ChevronLeft className="h-5 w-5 text-zinc-200 group-hover:text-indigo-400 transition-colors" />
-            </Link>
-            <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
-                S
+      <div className="min-h-dvh bg-black text-white font-sans selection:bg-white/20 relative overflow-hidden">
+        {/* Background Elements - Absolute Sync with Landing Page */}
+        <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.4]"></div>
+        <div className="fixed top-[-15%] right-[-10%] w-[60vw] h-[60vw] lens-flare pointer-events-none z-0 opacity-40"></div>
+
+        {/* Premium Header */}
+        <header className="relative z-50 w-full border-b border-white/5 bg-black/40 backdrop-blur-3xl sticky top-0">
+          <div className="max-w-[1400px] mx-auto flex h-20 md:h-24 items-center justify-between px-4 md:px-8">
+            <div className="flex items-center gap-6 md:gap-8">
+              <Link href="/dashboard" className="group rounded-none p-3 border border-white/10 hover:border-white transition-all bg-white/[0.02]">
+                <ChevronLeft className="h-4 w-4 text-white/70 group-hover:text-white transition-colors" />
+              </Link>
+              <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
+                <div className="h-8 w-8 md:h-9 md:w-9 bg-white rounded-none flex items-center justify-center font-display font-bold text-black text-base md:text-lg hover:scale-105 transition-transform">
+                  S
+                </div>
+                <span className="font-display text-lg md:text-2xl tracking-[0.15em] font-semibold uppercase text-gradient">
+                  Content Planner
+                </span>
               </div>
-              <span className="font-bold text-2xl tracking-tight hidden sm:block text-white">
-                Content Planner
-              </span>
             </div>
-          </div>
-          <div className="flex items-center gap-6">
-             <button 
-              onClick={() => setIsModalOpen(true)}
-              className="group relative inline-flex items-center gap-3 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-xl shadow-indigo-600/20 hover:bg-indigo-500 transition-all hover:-translate-y-1 active:scale-95"
-            >
-              <Target className="h-4 w-4" />
-              Create Plan
-            </button>
-            <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block" />
-            <div className="hidden lg:flex flex-col items-end">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">Active Workspace</span>
-                <span className="text-xs text-zinc-100 font-medium">{userEmail}</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-[1400px] mx-auto px-4 py-16">
-        <div className="flex flex-col lg:flex-row gap-12">
-          
-          {/* Calendar Sidebar */}
-          <div className="lg:w-80 space-y-10">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Content Calendar</span>
+            <div className="flex items-center gap-4 md:gap-6">
+               <button 
+                onClick={() => setIsModalOpen(true)}
+                className="group relative bg-white text-black px-6 md:px-8 py-3 md:py-4 rounded-none font-bold text-[10px] md:text-[11px] uppercase tracking-[0.4em] transition-all hover:bg-silver active:scale-95 cta-glow-pulse flex items-center gap-3"
+              >
+                <Target className="h-3 md:h-4 w-3 md:w-4" />
+                <span className="hidden md:inline">Create Plan</span>
+              </button>
+              <div className="hidden lg:flex flex-col items-end border-l border-white/10 pl-6 h-8 justify-center">
+                  <span className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50">Workspace</span>
+                  <span className="text-[10px] text-white/90 font-bold tracking-widest">{userEmail}</span>
               </div>
-              <h2 className="text-4xl font-bold tracking-tight text-white">Your <span className="text-brand">Schedule</span></h2>
-            </div>
-
-            <div className="p-8 rounded-[2rem] border border-white/5 bg-zinc-950/40 backdrop-blur-xl space-y-8 premium-card shadow-2xl">
-               <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xl text-white">{monthNames[month]} <span className="text-zinc-300 font-medium">{year}</span></h3>
-                  <div className="flex gap-2">
-                    <button onClick={prevMonth} className="p-2.5 hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/5">
-                      <ChevronLeft className="w-5 h-5 text-zinc-200" />
-                    </button>
-                    <button onClick={nextMonth} className="p-2.5 hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/5">
-                      <ChevronRight className="w-5 h-5 text-zinc-200" />
-                    </button>
-                  </div>
-               </div>
-               
-               <div className="grid grid-cols-7 gap-2 text-center text-[9px] font-bold text-zinc-300 uppercase tracking-widest">
-                  {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={`${d}-${i}`}>{d}</div>)}
-               </div>
-               
-               <div className="grid grid-cols-7 gap-2">
-                  {calendarDays.map((day, i) => (
-                    <div 
-                      key={i} 
-                      className={cn(
-                        "aspect-square flex items-center justify-center text-xs rounded-xl border transition-all duration-300",
-                        day ? "border-white/5 hover:border-indigo-500/30 cursor-pointer" : "border-transparent",
-                        day && getScriptsForDay(day).length > 0 
-                            ? "bg-indigo-500/10 border-indigo-500/40 text-indigo-400 font-bold shadow-lg shadow-indigo-500/5 hover:scale-110" 
-                            : "text-zinc-600 font-medium"
-                      )}
-                    >
-                      {day}
-                    </div>
-                  ))}
-               </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-white/5 bg-zinc-950/40 p-8 space-y-6 premium-card">
-               <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-300">Performance Metrics</h4>
-               <div className="grid grid-cols-1 gap-6">
-                  <div className="flex justify-between items-center group">
-                    <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Planned Scripts</p>
-                    <p className="text-2xl font-black text-white group-hover:text-indigo-400 transition-colors">{initialScripts.length}</p>
-                  </div>
-                  <div className="h-px w-full bg-white/5" />
-                  <div className="flex justify-between items-center group">
-                    <div className="flex items-center gap-2">
-                        <BarChart3 className="w-3.5 h-3.5 text-indigo-500" />
-                        <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Success Rate</p>
-                    </div>
-                    <p className="text-2xl font-black text-indigo-500">100%</p>
-                  </div>
-               </div>
             </div>
           </div>
+        </header>
 
-          {/* Main Content Area */}
-          <div className="flex-1 space-y-20">
+        <main className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 py-12 md:py-16">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
             
-            {/* Scheduled Content Queue */}
-            {calendarDays.filter(d => d !== null && getScriptsForDay(d).length > 0).length > 0 && (
-              <div className="space-y-10">
-                <div className="flex items-center gap-6">
-                  <div className="h-12 w-12 rounded-[1.25rem] bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 shadow-xl shadow-indigo-500/5">
-                    <Clock className="w-6 h-6 text-indigo-400" />
-                  </div>
-                  <h2 className="text-3xl font-bold tracking-tight text-white uppercase">Upcoming <span className="text-brand">Scripts</span></h2>
-                  <div className="h-px flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent" />
+            {/* Calendar Sidebar */}
+            <div className="lg:w-80 space-y-8 md:space-y-10">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-4 px-4 py-2 border border-white/10 bg-white/[0.02] mb-2">
+                  <div className="h-1.5 w-1.5 rounded-none bg-white animate-pulse" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.6em] text-white/70">Calendar</span>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                   {calendarDays
-                    .filter(d => d !== null && getScriptsForDay(d).length > 0)
-                    .map((day) => {
-                      const dayScripts = getScriptsForDay(day!);
-                      const isToday = new Date().toDateString() === new Date(year, month, day!).toDateString();
-                      
-                      return (
-                        <div 
-                          key={`planned-${day}`} 
-                          className={cn(
-                            "min-h-[180px] rounded-[2.5rem] border p-8 transition-all duration-500 bg-zinc-950/50 border-white/5 shadow-2xl relative overflow-hidden group hover:-translate-y-2",
-                            isToday && "ring-2 ring-indigo-600 ring-offset-4 ring-offset-black bg-indigo-600/[0.03]"
-                          )}
-                        >
-                          <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-150 transition-transform duration-1000">
-                             <Sparkles className="w-24 h-24 text-indigo-400" />
-                          </div>
-
-                          <div className="flex justify-between items-start mb-8 relative">
-                             <div className="flex flex-col">
-                               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400 mb-2">
-                                 {day} {monthNames[month].slice(0,3)} {year}
-                               </span>
-                               <span className="text-xs font-bold text-zinc-100 uppercase tracking-widest">
-                                 {dayScripts.length} Script{dayScripts.length > 1 ? 's' : ''}
-                               </span>
-                             </div>
-                             {isToday && (
-                               <span className="text-[10px] font-bold uppercase bg-indigo-600 text-white px-3 py-1 rounded-full shadow-lg shadow-indigo-600/20">Today</span>
-                             )}
-                          </div>
-
-                          <div className="space-y-4 relative">
-                             {dayScripts.map(script => (
-                               <button 
-                                 key={script.id}
-                                 onClick={() => setSelectedScript(script)}
-                                 className="w-full text-left p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all group/asset"
-                               >
-                                 <div className="flex items-center gap-3 mb-2">
-                                    <div className={cn("h-1.5 w-1.5 rounded-full", script.platform === 'LinkedIn' ? "bg-blue-500" : "bg-red-500")} />
-                                    <span className="text-[9px] font-bold text-zinc-400 group-hover/asset:text-zinc-300 uppercase tracking-widest transition-colors">{script.platform}</span>
-                                 </div>
-                                 <h5 className="text-sm font-bold line-clamp-2 text-zinc-200 group-hover/asset:text-white transition-colors leading-relaxed">{script.title}</h5>
-                               </button>
-                             ))}
-                          </div>
-                        </div>
-                      )
-                    })
-                   }
-                </div>
+                <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white uppercase">Schedule</h2>
               </div>
-            )}
 
-            {/* Monthly Overview Grid */}
-            <div className="space-y-10">
-              <div className="flex items-center justify-between">
-                 <div className="flex items-center gap-6">
-                    <CalendarIcon className="w-8 h-8 text-zinc-600" />
-                    <h2 className="text-3xl font-bold tracking-tight uppercase text-zinc-200">{monthNames[month]} Overview</h2>
+              <div className="p-6 md:p-8 rounded-none border border-white/10 bg-white/[0.01] backdrop-blur-sm space-y-8 relative overflow-hidden group">
+                 <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700" />
+                 <div className="flex items-center justify-between">
+                    <h3 className="font-display font-bold text-lg text-white uppercase tracking-widest">{monthNames[month]} <span className="text-white/40">{year}</span></h3>
+                    <div className="flex gap-2">
+                      <button onClick={prevMonth} className="p-2 hover:bg-white/10 rounded-none transition-all border border-white/5 hover:border-white/20">
+                        <ChevronLeft className="w-4 h-4 text-white/70" />
+                      </button>
+                      <button onClick={nextMonth} className="p-2 hover:bg-white/10 rounded-none transition-all border border-white/5 hover:border-white/20">
+                        <ChevronRight className="w-4 h-4 text-white/70" />
+                      </button>
+                    </div>
+                 </div>
+                 
+                 <div className="grid grid-cols-7 gap-2 text-center text-[8px] font-black text-white/30 uppercase tracking-[0.3em]">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={`${d}-${i}`}>{d}</div>)}
+                 </div>
+                 
+                 <div className="grid grid-cols-7 gap-2">
+                    {calendarDays.map((day, i) => (
+                      <div 
+                        key={i} 
+                        className={cn(
+                          "aspect-square flex items-center justify-center text-[10px] rounded-none border transition-all duration-300 font-bold",
+                          day ? "border-white/5 hover:border-white/40 cursor-pointer hover:bg-white/5" : "border-transparent",
+                          day && getScriptsForDay(day).length > 0 
+                              ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]" 
+                              : "text-white/40"
+                        )}
+                      >
+                        {day}
+                      </div>
+                    ))}
                  </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                 {calendarDays.filter(d => d !== null).map((day) => {
-                   const dayScripts = getScriptsForDay(day!);
-                   const isToday = new Date().toDateString() === new Date(year, month, day!).toDateString();
-                   
-                   return (
-                     <div 
-                      key={day} 
-                      className={cn(
-                        "min-h-[180px] rounded-[2.5rem] border p-6 transition-all duration-500 premium-card group",
-                        isToday ? "border-indigo-500/40 bg-indigo-500/[0.02] shadow-[0_0_30px_rgba(99,102,241,0.05)]" : "border-white/5 bg-zinc-950/20 hover:bg-zinc-950/40",
-                        dayScripts.length > 0 ? "opacity-100 ring-1 ring-indigo-500/10" : "opacity-30 hover:opacity-100"
-                      )}
-                     >
-                       <div className="flex justify-between items-start mb-6">
-                          <span className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-bold transition-all group-hover:scale-110",
-                            isToday ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/30" : "bg-white/5 text-zinc-500"
-                          )}>
-                            {day}
-                          </span>
-                       </div>
+              <div className="rounded-none border border-white/10 bg-white/[0.01] p-6 md:p-8 space-y-6 relative overflow-hidden group">
+                 <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-700 delay-100" />
+                 <h4 className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50">Metrics</h4>
+                 <div className="grid grid-cols-1 gap-6">
+                    <div className="flex justify-between items-center group/stat">
+                      <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">Planned Scripts</p>
+                      <p className="text-2xl font-display font-bold text-white group-hover/stat:text-gradient transition-all">{initialScripts.length}</p>
+                    </div>
+                    <div className="h-px w-full bg-white/5" />
+                    <div className="flex justify-between items-center group/stat">
+                      <div className="flex items-center gap-2">
+                          <BarChart3 className="w-3 h-3 text-white/70" />
+                          <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">Rate</p>
+                      </div>
+                      <p className="text-2xl font-display font-bold text-white">100%</p>
+                    </div>
+                 </div>
+              </div>
+            </div>
 
-                       <div className="space-y-3">
-                          {dayScripts.length > 0 ? (
-                            dayScripts.map(script => (
-                              <button 
-                                key={script.id}
-                                onClick={() => setSelectedScript(script)}
-                                className="w-full text-left p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all group/sub"
-                              >
-                                <div className="flex items-center gap-3 mb-1.5">
-                                  {script.platform === 'LinkedIn' ? (
-                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                                  ) : (
-                                    <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                                  )}
-                                  <span className="text-[9px] font-bold text-zinc-600 group-hover/sub:text-zinc-500 uppercase tracking-widest transition-colors">{script.platform}</span>
-                                </div>
-                                <h5 className="text-xs font-bold line-clamp-1 text-zinc-500 group-hover/sub:text-white transition-colors">{script.title}</h5>
-                              </button>
-                            ))
-                          ) : (
-                            <div className="flex flex-col items-center justify-center h-24 text-zinc-600 font-bold uppercase tracking-[0.3em] text-[10px]">
-                              Open Slot
-                            </div>
-                          )}
-                       </div>
+            {/* Main Content Area */}
+            <div className="flex-1 space-y-16 md:space-y-20">
+              
+              {/* Scheduled Content Queue */}
+              {calendarDays.filter(d => d !== null && getScriptsForDay(d).length > 0).length > 0 && (
+                <div className="space-y-8 md:space-y-10">
+                  <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 border-b border-white/5 pb-8">
+                     <div className="h-10 w-10 md:h-12 md:w-12 bg-white flex items-center justify-center">
+                        <Clock className="w-5 h-5 md:w-6 md:h-6 text-black" />
                      </div>
-                   )
-                 })}
+                     <div>
+                        <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight text-white uppercase mb-2">Upcoming <span className="text-white/40">Scripts</span></h2>
+                        <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Your Content Pipeline</p>
+                     </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+                     {calendarDays
+                      .filter(d => d !== null && getScriptsForDay(d).length > 0)
+                      .map((day) => {
+                        const dayScripts = getScriptsForDay(day!);
+                        const isToday = new Date().toDateString() === new Date(year, month, day!).toDateString();
+                        
+                        return (
+                          <div 
+                            key={`planned-${day}`} 
+                            className={cn(
+                              "min-h-[180px] rounded-none border p-6 md:p-8 transition-all duration-500 bg-white/[0.01] border-white/10 relative overflow-hidden group hover:-translate-y-1 hover:border-white/30",
+                              isToday && "border-white/40 bg-white/[0.03]"
+                            )}
+                          >
+                            <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:scale-150 transition-transform duration-1000 rotate-12">
+                               <Sparkles className="w-24 h-24 text-white" />
+                            </div>
+                            <div className="absolute top-0 left-0 w-1 h-0 bg-white group-hover:h-full transition-all duration-500" />
+
+                            <div className="flex justify-between items-start mb-8 relative">
+                               <div className="flex flex-col">
+                                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/50 mb-2">
+                                   {day} {monthNames[month].slice(0,3)}
+                                 </span>
+                                 <span className="text-xs font-bold text-white uppercase tracking-widest">
+                                   {dayScripts.length} Script{dayScripts.length > 1 ? 's' : ''}
+                                 </span>
+                               </div>
+                               {isToday && (
+                                 <span className="text-[8px] font-black uppercase bg-white text-black px-3 py-1 tracking-[0.2em]">Today</span>
+                               )}
+                            </div>
+
+                            <div className="space-y-3 relative">
+                               {dayScripts.map(script => (
+                                 <button 
+                                   key={script.id}
+                                   onClick={() => setSelectedScript(script)}
+                                   className="w-full text-left p-4 rounded-none bg-white/[0.02] border border-white/5 hover:border-white hover:bg-white text-white hover:text-black transition-all group/asset"
+                                 >
+                                   <div className="flex items-center gap-3 mb-2">
+                                      <div className={cn("h-1 w-1", script.platform === 'LinkedIn' ? "bg-blue-500" : "bg-red-500")} />
+                                      <span className="text-[8px] font-black text-white/40 group-hover/asset:text-black/60 uppercase tracking-[0.3em] transition-colors">{script.platform}</span>
+                                   </div>
+                                   <h5 className="text-[11px] font-bold line-clamp-1 uppercase tracking-wider">{script.title}</h5>
+                                 </button>
+                               ))}
+                            </div>
+                          </div>
+                        )
+                      })
+                     }
+                  </div>
+                </div>
+              )}
+
+              {/* Monthly Overview Grid */}
+              <div className="space-y-8 md:space-y-10">
+                <div className="flex items-center justify-between border-b border-white/5 pb-8">
+                   <div className="flex items-center gap-6 md:gap-8">
+                      <div className="h-10 w-10 md:h-12 md:w-12 border border-white/10 flex items-center justify-center">
+                        <CalendarIcon className="w-5 h-5 md:w-6 md:h-6 text-white/70" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight uppercase text-white mb-2">{monthNames[month]} <span className="text-white/40">Overview</span></h2>
+                         <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Full Month View</p>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                   {calendarDays.filter(d => d !== null).map((day) => {
+                     const dayScripts = getScriptsForDay(day!);
+                     const isToday = new Date().toDateString() === new Date(year, month, day!).toDateString();
+                     
+                     return (
+                       <div 
+                        key={day} 
+                        className={cn(
+                          "min-h-[160px] rounded-none border p-6 transition-all duration-500 group relative",
+                          isToday ? "border-white bg-white/[0.05]" : "border-white/5 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/20",
+                          dayScripts.length > 0 ? "opacity-100" : "opacity-40 hover:opacity-100"
+                        )}
+                       >
+                         {/* Corner accents */}
+                         <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20 group-hover:border-white transition-colors" />
+                         <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 group-hover:border-white transition-colors" />
+
+                         <div className="flex justify-between items-start mb-6">
+                            <span className={cn(
+                              "flex h-8 w-8 items-center justify-center rounded-none text-xs font-bold transition-all border",
+                              isToday ? "bg-white text-black border-white" : "bg-transparent text-white/50 border-white/10 group-hover:border-white/30"
+                            )}>
+                              {day}
+                            </span>
+                         </div>
+
+                         <div className="space-y-2">
+                            {dayScripts.length > 0 ? (
+                              dayScripts.map(script => (
+                                <button 
+                                  key={script.id}
+                                  onClick={() => setSelectedScript(script)}
+                                  className="w-full text-left p-3 rounded-none bg-white/[0.03] border border-white/5 hover:border-white hover:bg-white text-white hover:text-black transition-all group/sub"
+                                >
+                                  <div className="flex items-center gap-3 mb-1.5">
+                                    <div className={cn("h-1 w-1", script.platform === 'LinkedIn' ? "bg-blue-500" : "bg-red-500")} />
+                                    <span className="text-[8px] font-black text-white/40 group-hover/sub:text-black/50 uppercase tracking-[0.2em] transition-colors">{script.platform}</span>
+                                  </div>
+                                  <h5 className="text-[10px] font-bold line-clamp-1 uppercase tracking-wide opacity-80 group-hover/sub:opacity-100">{script.title}</h5>
+                                </button>
+                              ))
+                            ) : (
+                              <div className="flex flex-col items-center justify-center h-20 text-white/20 font-bold uppercase tracking-[0.3em] text-[8px]">
+                                Empty
+                              </div>
+                            )}
+                         </div>
+                       </div>
+                     )
+                   })}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      {/* Script Detail Modal */}
-      <AnimatePresence>
-        {selectedScript && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedScript(null)}
-              className="absolute inset-0 bg-[#020617]/95 backdrop-blur-3xl"
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 30 }}
-              className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-[3rem] border border-white/5 bg-zinc-950 shadow-[0_0_100px_rgba(99,102,241,0.05)] premium-card"
-            >
-              <div className="p-10 border-b border-white/5 flex items-center justify-between sticky top-0 bg-zinc-950/80 backdrop-blur-md z-10">
-                <div className="flex items-center gap-6">
-                   <div className={cn(
-                     "h-14 w-14 rounded-2xl flex items-center justify-center border",
-                     selectedScript.platform === 'LinkedIn' ? "bg-blue-500/10 text-blue-500 border-blue-500/20" : "bg-red-500/10 text-red-500 border-red-500/20"
-                   )}>
-                      {selectedScript.platform === 'LinkedIn' ? <Layout className="w-6 h-6" /> : <Type className="w-6 h-6" />}
-                   </div>
-                   <div className="space-y-2">
-                    <h3 className="font-bold text-2xl tracking-tight text-white">{selectedScript.title}</h3>
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400">{selectedScript.scheduled_date}</span>
-                        <span className="h-1 w-1 rounded-full bg-zinc-600" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">{selectedScript.tone} Tone</span>
-                    </div>
-                   </div>
+        {/* Script Detail Modal */}
+        <AnimatePresence>
+          {selectedScript && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedScript(null)}
+                className="absolute inset-0 bg-black/90 backdrop-blur-3xl"
+              />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="relative w-full max-w-3xl max-h-[90dvh] overflow-hidden rounded-none border border-white/20 bg-black shadow-2xl flex flex-col"
+              >
+                <div className="p-8 md:p-10 border-b border-white/10 flex items-center justify-between sticky top-0 bg-black z-10">
+                  <div className="flex items-center gap-6 md:gap-8">
+                     <div className="h-12 w-12 md:h-14 md:w-14 rounded-none flex items-center justify-center border border-white/20 bg-white/[0.05]">
+                        {selectedScript.platform === 'LinkedIn' ? <Layout className="w-5 h-5 md:w-6 md:h-6 text-white" /> : <Type className="w-5 h-5 md:w-6 md:h-6 text-white" />}
+                     </div>
+                     <div className="space-y-1">
+                      <div className="flex items-center gap-4">
+                          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/50">{selectedScript.scheduled_date}</span>
+                          <span className="h-0.5 w-0.5 bg-white/50" />
+                          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/50">{selectedScript.tone} Tone</span>
+                      </div>
+                      <h3 className="font-display font-bold text-xl md:text-2xl tracking-wide text-white uppercase">{selectedScript.title}</h3>
+                     </div>
+                  </div>
+                  <button onClick={() => setSelectedScript(null)} className="p-3 hover:bg-white hover:text-black text-white/60 rounded-none transition-all border border-transparent hover:border-white">
+                    <X className="w-6 h-6" />
+                  </button>
                 </div>
-                <button onClick={() => setSelectedScript(null)} className="p-3 hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/5">
-                  <X className="w-7 h-7 text-zinc-600" />
-                </button>
-              </div>
-              <div className="p-10 overflow-y-auto max-h-[calc(90vh-120px)] custom-scrollbar">
-                <pre className="whitespace-pre-wrap font-sans text-zinc-300 leading-[1.8] text-base bg-black/40 p-10 rounded-[2rem] border border-white/5 shadow-inner">
-                    {selectedScript.content}
-                </pre>
-              </div>
-              <div className="p-8 border-t border-white/5 bg-zinc-950/50 flex justify-end gap-5">
-                 <Link href={`/editor?id=${selectedScript.id}`}>
-                    <button className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-bold text-sm shadow-xl shadow-indigo-600/20 transition-all hover:scale-105 active:scale-95 group">
-                      <ExternalLink className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                      View in Editor
-                    </button>
-                 </Link>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                
+                <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar bg-black relative">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                  <pre className="whitespace-pre-wrap font-sans text-white/80 leading-[2] text-sm md:text-base border-l-2 border-white/10 pl-8 ml-2">
+                      {selectedScript.content}
+                  </pre>
+                </div>
+                
+                <div className="p-8 border-t border-white/10 bg-white/[0.02] flex justify-end gap-5">
+                   <Link href={`/editor?id=${selectedScript.id}`}>
+                      <button className="flex items-center gap-4 px-10 py-5 rounded-none bg-white text-black font-black text-[10px] uppercase tracking-[0.4em] shadow-xl hover:bg-silver transition-all active:scale-95 group">
+                        <ExternalLink className="w-3 h-3 group-hover:scale-110 transition-transform" />
+                        Open Editor
+                      </button>
+                   </Link>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
-      {/* Generator Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => !isGenerating && setIsModalOpen(false)}
-              className="absolute inset-0 bg-[#020617]/95 backdrop-blur-2xl"
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="relative w-full max-w-4xl rounded-[3rem] border border-white/5 bg-zinc-950 p-10 sm:p-14 shadow-2xl overflow-hidden group premium-card"
-            >
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full -z-10 pointer-events-none" />
-              
-              <div className="flex items-center gap-8 mb-12 relative">
-                <div className="h-16 w-16 rounded-2xl bg-indigo-600/10 flex items-center justify-center shrink-0 border border-indigo-600/20 shadow-lg">
-                  <Sparkles className="w-9 h-9 text-indigo-500" />
-                </div>
-                <div>
-                  <h3 className="text-3xl font-bold tracking-tight text-white uppercase">Plan Generator</h3>
-                  <p className="text-zinc-300 font-bold text-xs uppercase tracking-widest">Create a multi-day script plan</p>
-                </div>
-              </div>
-
-              <form action={formAction} className="space-y-10 relative">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 ml-1">Topic</label>
-                  <input 
-                    name="topic"
-                    required
-                    placeholder="e.g. B2B Sales Strategies for Startups"
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-zinc-700 font-medium"
-                  />
+        {/* Generator Modal */}
+        <AnimatePresence>
+          {isModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => !isGenerating && setIsModalOpen(false)}
+                className="absolute inset-0 bg-black/95 backdrop-blur-2xl"
+              />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="relative w-full max-w-4xl rounded-none border border-white/10 bg-black p-8 md:p-14 shadow-2xl overflow-hidden group"
+              >
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/[0.02] blur-[150px] rounded-full -z-10 pointer-events-none" />
+                
+                <div className="flex items-center gap-8 mb-12 relative border-b border-white/5 pb-8">
+                  <div className="h-16 w-16 rounded-none bg-white flex items-center justify-center shrink-0 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                    <Sparkles className="w-8 h-8 text-black" />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-display font-bold tracking-tight text-white uppercase">Plan Generator</h3>
+                    <p className="text-white/40 font-bold text-[10px] uppercase tracking-[0.4em]">Create a multi-day script plan</p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Platform</label>
-                    <select 
-                      name="platform" 
-                      onChange={(e) => setPlatform(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium"
-                    >
-                      <option value="YouTube" className="bg-zinc-900 text-white font-sans">YouTube</option>
-                      <option value="LinkedIn" className="bg-zinc-900 text-white font-sans">LinkedIn</option>
-                    </select>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Days to Plan</label>
-                    <select name="days" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
-                      <option value="7" className="bg-zinc-900 text-white font-sans">7-Day Sprint</option>
-                      <option value="30" className="bg-zinc-900 text-white font-sans">30-Day Strategy</option>
-                    </select>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Strategy</label>
-                    <select name="framework" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
-                      <option value="AIDA" className="bg-zinc-900 text-white font-sans">AIDA Framework</option>
-                      <option value="PAS" className="bg-zinc-900 text-white font-sans">PAS Framework</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Language</label>
-                    <select name="language" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
-                      <option value="English" className="bg-zinc-900 text-white font-sans">English</option>
-                      <option value="Tamil" className="bg-zinc-900 text-white font-sans">Tamil</option>
-                      <option value="Hindi" className="bg-zinc-900 text-white font-sans">Hindi</option>
-                      <option value="Spanish" className="bg-zinc-900 text-white font-sans">Spanish</option>
-                    </select>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Tone</label>
-                    <select name="tone" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
-                      <option value="Professional" className="bg-zinc-900 text-white font-sans">Professional</option>
-                      <option value="Casual" className="bg-zinc-900 text-white font-sans">Casual</option>
-                      <option value="Educational" className="bg-zinc-900 text-white font-sans">Educational</option>
-                      <option value="Witty" className="bg-zinc-900 text-white font-sans">Witty</option>
-                    </select>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Start Date</label>
+                <form action={formAction} className="space-y-10 relative">
+                  <div className="space-y-4">
+                    <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Topic</label>
                     <input 
-                      type="date"
-                      name="startDate"
+                      name="topic"
                       required
-                      defaultValue={new Date().toISOString().split('T')[0]}
-                      className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-[17px] outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all [color-scheme:dark] text-white font-medium"
+                      placeholder="e.g. B2B Sales Strategies for Startups"
+                      className="w-full bg-transparent border border-white/20 rounded-none px-6 py-5 outline-none focus:border-white focus:bg-white/[0.02] transition-all text-white placeholder:text-white/20 font-medium text-lg"
                     />
                   </div>
-                </div>
 
-                {platform === 'YouTube' && (
-                  <div className="space-y-3 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Average Duration</label>
-                    <select name="length" className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 appearance-none cursor-pointer text-white font-medium">
-                      <option value="Short" className="bg-zinc-900 text-white font-sans">Short (~3m)</option>
-                      <option value="Medium" className="bg-zinc-900 text-white font-sans">Medium (~8m)</option>
-                      <option value="Long" className="bg-zinc-900 text-white font-sans">Long (~15m)</option>
-                    </select>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Platform</label>
+                      <div className="relative group">
+                        <select 
+                          name="platform" 
+                          onChange={(e) => setPlatform(e.target.value)}
+                          className="w-full bg-transparent border border-white/10 rounded-none px-6 py-4 outline-none focus:border-white appearance-none cursor-pointer text-white font-medium text-sm hover:border-white/40 transition-all"
+                        >
+                          <option value="YouTube" className="bg-black text-white font-sans">YouTube</option>
+                          <option value="LinkedIn" className="bg-black text-white font-sans">LinkedIn</option>
+                        </select>
+                        <div className="absolute right-6 top-5 pointer-events-none text-white/40"><ChevronRight className="w-3 h-3 rotate-90" /></div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Duration</label>
+                      <div className="relative group">
+                          <select name="days" className="w-full bg-transparent border border-white/10 rounded-none px-6 py-4 outline-none focus:border-white appearance-none cursor-pointer text-white font-medium text-sm hover:border-white/40 transition-all">
+                            <option value="7" className="bg-black text-white font-sans">7-Day Sprint</option>
+                            <option value="30" className="bg-black text-white font-sans">30-Day Strategy</option>
+                          </select>
+                          <div className="absolute right-6 top-5 pointer-events-none text-white/40"><ChevronRight className="w-3 h-3 rotate-90" /></div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Strategy</label>
+                      <div className="relative group">
+                          <select name="framework" className="w-full bg-transparent border border-white/10 rounded-none px-6 py-4 outline-none focus:border-white appearance-none cursor-pointer text-white font-medium text-sm hover:border-white/40 transition-all">
+                            <option value="AIDA" className="bg-black text-white font-sans">AIDA Framework</option>
+                            <option value="PAS" className="bg-black text-white font-sans">PAS Framework</option>
+                          </select>
+                          <div className="absolute right-6 top-5 pointer-events-none text-white/40"><ChevronRight className="w-3 h-3 rotate-90" /></div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Language</label>
+                      <div className="relative group">
+                          <select name="language" className="w-full bg-transparent border border-white/10 rounded-none px-6 py-4 outline-none focus:border-white appearance-none cursor-pointer text-white font-medium text-sm hover:border-white/40 transition-all">
+                            <option value="English" className="bg-black text-white font-sans">English</option>
+                            <option value="Tamil" className="bg-black text-white font-sans">Tamil</option>
+                            <option value="Tanglish" className="bg-black text-white font-sans">Tanglish</option>
+                            <option value="Hindi" className="bg-black text-white font-sans">Hindi</option>
+                            <option value="Hinglish" className="bg-black text-white font-sans">Hinglish</option>
+                            <option value="Spanish" className="bg-black text-white font-sans">Spanish</option>
+                          </select>
+                          <div className="absolute right-6 top-5 pointer-events-none text-white/40"><ChevronRight className="w-3 h-3 rotate-90" /></div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Tone</label>
+                      <div className="relative group">
+                          <select name="tone" className="w-full bg-transparent border border-white/10 rounded-none px-6 py-4 outline-none focus:border-white appearance-none cursor-pointer text-white font-medium text-sm hover:border-white/40 transition-all">
+                            <option value="Professional" className="bg-black text-white font-sans">Professional</option>
+                            <option value="Casual" className="bg-black text-white font-sans">Casual</option>
+                            <option value="Educational" className="bg-black text-white font-sans">Educational</option>
+                            <option value="Witty" className="bg-black text-white font-sans">Witty</option>
+                          </select>
+                          <div className="absolute right-6 top-5 pointer-events-none text-white/40"><ChevronRight className="w-3 h-3 rotate-90" /></div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Start Date</label>
+                      <input 
+                        type="date"
+                        name="startDate"
+                        required
+                        defaultValue={new Date().toISOString().split('T')[0]}
+                        className="w-full bg-transparent border border-white/10 rounded-none px-6 py-[15px] outline-none focus:border-white transition-all [color-scheme:dark] text-white font-medium text-sm hover:border-white/40"
+                      />
+                    </div>
                   </div>
-                )}
 
-                <div className="pt-8 flex flex-col sm:flex-row items-center gap-6">
-                  <button 
-                    disabled={isGenerating}
-                    type="submit"
-                    className="w-full sm:flex-1 py-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 transition-all font-bold text-white shadow-xl shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group/btn relative overflow-hidden uppercase tracking-widest text-sm"
-                  >
-                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Generating Plan...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-5 h-5 group-hover/btn:scale-125 transition-transform" />
-                        Generate Plan
-                      </>
-                    )}
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    disabled={isGenerating}
-                    className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white/5 hover:bg-white/10 transition-all text-xs font-bold uppercase tracking-widest text-zinc-300 hover:text-white border border-white/5"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                  {platform === 'YouTube' && (
+                    <div className="space-y-3 animate-in fade-in slide-in-from-top-4 duration-500">
+                      <label className="text-[9px] font-black uppercase tracking-[0.5em] text-white/50 ml-1">Video Length</label>
+                      <div className="relative group">
+                          <select name="length" className="w-full md:w-1/3 bg-transparent border border-white/10 rounded-none px-6 py-4 outline-none focus:border-white appearance-none cursor-pointer text-white font-medium text-sm hover:border-white/40 transition-all">
+                            <option value="Short" className="bg-black text-white font-sans">Short (~3m)</option>
+                            <option value="Medium" className="bg-black text-white font-sans">Medium (~8m)</option>
+                            <option value="Long" className="bg-black text-white font-sans">Long (~15m)</option>
+                          </select>
+                          <div className="absolute left-[calc(33%-2rem)] top-5 pointer-events-none text-white/40"><ChevronRight className="w-3 h-3 rotate-90" /></div>
+                      </div>
+                    </div>
+                  )}
 
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(99, 102, 241, 0.1);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(99, 102, 241, 0.2);
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-      `}</style>
-    </div>
+                  <div className="pt-8 flex flex-col sm:flex-row items-center gap-6 border-t border-white/5 mt-8">
+                    <button 
+                      disabled={isGenerating}
+                      type="submit"
+                      className="w-full sm:flex-1 py-5 rounded-none bg-white hover:bg-silver transition-all font-black text-black shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-4 group/btn relative overflow-hidden uppercase tracking-[0.4em] text-xs"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
+                          Generate Plan
+                        </>
+                      )}
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      disabled={isGenerating}
+                      className="w-full sm:w-auto px-12 py-5 rounded-none bg-transparent hover:bg-white/5 transition-all text-[10px] font-black uppercase tracking-[0.4em] text-white/50 hover:text-white border border-white/10 hover:border-white"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        <style jsx global>{`
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+              display: none;
+          }
+        `}</style>
+      </div>
   )
 }

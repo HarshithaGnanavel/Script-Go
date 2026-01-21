@@ -25,28 +25,28 @@ export default async function DashboardPage(props: { searchParams: Promise<{ new
   const scripts = data || []
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 relative overflow-hidden">
+    <div className="min-h-dvh bg-black text-white font-sans selection:bg-white/20 relative overflow-hidden">
       {/* Background Elements - Absolute Sync with Landing Page */}
       <div className="fixed inset-0 pointer-events-none z-0 grid-pattern opacity-[0.4]"></div>
       <div className="fixed top-[-15%] right-[-10%] w-[60vw] h-[60vw] lens-flare pointer-events-none z-0 opacity-40"></div>
 
       {/* Premium Header - Matching Landing Page Nav */}
       <nav className="relative z-50 w-full border-b border-white/5 bg-black/40 backdrop-blur-3xl">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-24 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-5 group">
-            <div className="w-9 h-9 bg-white rounded-none flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span className="text-black font-display font-bold text-lg">S</span>
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-20 md:h-24 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-3 md:gap-5 group">
+            <div className="w-8 h-8 md:w-9 md:h-9 bg-white rounded-none flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span className="text-black font-display font-bold text-base md:text-lg">S</span>
             </div>
-            <span className="font-display text-2xl tracking-[0.15em] font-semibold uppercase text-gradient">ScriptGo</span>
+            <span className="font-display text-lg md:text-2xl tracking-[0.15em] font-semibold uppercase text-gradient">ScriptGo</span>
           </Link>
           
-          <div className="flex items-center gap-10">
-            <Link href="/planner" className="flex items-center gap-3 text-[10px] font-bold text-white/80 uppercase tracking-[0.4em] hover:text-white transition-colors">
+          <div className="flex items-center gap-4 md:gap-10">
+            <Link href="/planner" className="flex items-center gap-2 md:gap-3 text-[10px] font-bold text-white/80 uppercase tracking-[0.4em] hover:text-white transition-colors">
                 <Zap className="w-4 h-4" />
-                Planner
+                <span className="hidden md:inline">Planner</span>
             </Link>
-            <Link href="/profile" className="w-12 h-12 border border-white/10 flex items-center justify-center hover:border-white transition-all bg-white/[0.02]">
-                <User className="w-5 h-5 text-white/90" />
+            <Link href="/profile" className="w-10 h-10 md:w-12 md:h-12 border border-white/10 flex items-center justify-center hover:border-white transition-all bg-white/[0.02]">
+                <User className="w-4 h-4 md:w-5 md:h-5 text-white/90" />
             </Link>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 import { revalidatePath } from 'next/cache'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -12,6 +13,10 @@ const openai = new OpenAI({
     "X-Title": "ScriptGo",
   }
 })
+
+// Initialize Gemini Client
+const googleApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY
+const genAI = googleApiKey ? new GoogleGenerativeAI(googleApiKey) : null;
 
 export async function generatePlannerScripts(prevState: any, formData: FormData) {
   const supabase = await createClient()
@@ -38,7 +43,10 @@ export async function generatePlannerScripts(prevState: any, formData: FormData)
 
   const systemPrompt = `You are a world-class content strategist and professional script writer. 
   You specialize in creating high-conversion, viral content calendars for social media.
-  You speak native-level ${language} and specialize in the ${framework} marketing framework.`;
+  You speak native-level ${language} and specialize in the ${framework} marketing framework.
+  
+  If Language is **Tanglish**, use Tamil (English script) + English mix.
+  If Language is **Hinglish**, use Hindi (English script) + English mix.`;
 
   const aiPrompt = `Generate a ${days}-day content calendar about "${topic}" for ${platform}.
   Tone: ${tone}.
@@ -57,47 +65,73 @@ export async function generatePlannerScripts(prevState: any, formData: FormData)
   console.log('Generating planner scripts for:', { topic, days, platform });
 
   try {
-    let result;
-    try {
-      // 1. Primary: Gemini 2.0 Flash (Free)
-      result = await openai.chat.completions.create({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: aiPrompt }
-        ],
-        model: 'google/gemini-2.0-flash-exp:free',
-        response_format: { type: 'json_object' },
-      });
-    } catch (e: any) {
-      if (e.status === 429 || e.status === 404 || e.status === 403) {
-        console.log("Primary model busy in Planner, trying Fallback 1 (Llama 3.3 70B)...");
+    let rawResponse = '';
+
+    // PRIORITIZE: Direct Google Gemini API (if key exists)
+    if (genAI) {
+      try {
+        console.log("Attempting generation via Direct Gemini API (Planner)...");
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
+        const result = await model.generateContent(systemPrompt + "\n\n" + aiPrompt);
+        rawResponse = result.response.text();
+        console.log("Direct Gemini API Success");
+      } catch (geminiError: any) {
+        console.error("Direct Gemini API Failed:", geminiError.message);
+        // Fallthrough to OpenRouter
+      }
+    }
+
+    if (!rawResponse) {
+      try {
+        let result;
         try {
-          // 2. Fallback 1: Llama 3.3 70B (Free)
+          // 1. Primary: Gemini 2.0 Flash (Free)
           result = await openai.chat.completions.create({
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: aiPrompt }
             ],
-            model: 'meta-llama/llama-3.3-70b-instruct:free',
+            model: 'google/gemini-2.0-flash-exp:free',
             response_format: { type: 'json_object' },
           });
-        } catch (e2: any) {
-          console.log("Fallback 1 busy in Planner, trying Fallback 2 (Llama 3.2 3B)...");
-          // 3. Fallback 2: Llama 3.2 3B (Free)
-          result = await openai.chat.completions.create({
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: aiPrompt + " Return ONLY the raw JSON object." }
-            ],
-            model: 'meta-llama/llama-3.2-3b-instruct:free',
-          });
+        } catch (e: any) {
+          if (e.status === 429 || e.status === 404 || e.status === 403) {
+            console.log("Primary model busy in Planner, trying Fallback 1 (Llama 3.3 70B)...");
+            try {
+              // 2. Fallback 1: Llama 3.3 70B (Free)
+              result = await openai.chat.completions.create({
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: aiPrompt }
+                ],
+                model: 'meta-llama/llama-3.3-70b-instruct:free',
+                response_format: { type: 'json_object' },
+              });
+            } catch (e2: any) {
+              console.log("Fallback 1 busy in Planner, trying Fallback 2 (Llama 3.2 3B)...");
+              // 3. Fallback 2: Llama 3.2 3B (Free)
+              result = await openai.chat.completions.create({
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: aiPrompt + " Return ONLY the raw JSON object." }
+                ],
+                model: 'meta-llama/llama-3.2-3b-instruct:free',
+              });
+            }
+          } else {
+            throw e;
+          }
         }
-      } else {
-        throw e;
+        rawResponse = result?.choices[0].message.content || '';
+      } catch (openRouterError) {
+        console.error("OpenRouter Exhausted:", openRouterError);
+        if (!genAI) {
+          return { error: 'Rate Limit Exceeded. Please add a GOOGLE_API_KEY to your .env file to use the free Gemini tier.', success: false }
+        }
+        throw openRouterError;
       }
     }
 
-    const rawResponse = result.choices[0].message.content || ''
     console.log('AI Response received');
 
     let data;
