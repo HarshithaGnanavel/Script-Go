@@ -4,7 +4,7 @@ import { useState, useEffect, useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { generateScript, saveScript } from './actions'
 import Link from 'next/link'
-import { ArrowLeft, Copy, Save, Loader2, Sparkles, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Copy, Save, Loader2, Sparkles, ChevronRight, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 type State = {
@@ -51,15 +51,32 @@ export default function EditorClient({ initialData }: { initialData: any }) {
   const [platform, setPlatform] = useState(initialData?.platform || 'LinkedIn')
   const [isSaving, setIsSaving] = useState(false)
   
+  const [topic, setTopic] = useState(initialData?.title || '')
+  const [audience, setAudience] = useState(initialData?.audience || '')
+  const [wordCount, setWordCount] = useState(initialData?.wordCount || '')
+
   const router = useRouter()
 
   useEffect(() => {
     if (initialData) {
-        setContent(initialData.content || '')
-        setCurrentId(initialData.id || '')
-        setPlatform(initialData.platform || 'LinkedIn')
+        // Always sync the main content if it exists
+        if (initialData.content) setContent(initialData.content)
+        if (initialData.platform) setPlatform(initialData.platform)
+        
+        // Only overwrite form fields if we are loading a DIFFERENT script
+        // This prevents wiping local state when the page refreshes/revalidates after generation
+        // because "audience" and "wordCount" are not persisted in the DB currently.
+        if (initialData.id !== currentId) {
+            setCurrentId(initialData.id || '')
+            setTopic(initialData.title || '')
+            // Only set these if they exist in initialData, otherwise keep blank (or existing if we want stricter reset?)
+            // For now, if switching IDs, we should probably reset them to avoid carrying over "Audience" from script A to script B
+            // But since DB doesn't have them, they will come as undefined.
+            setAudience(initialData.audience || '')
+            setWordCount(initialData.wordCount || '')
+        }
     }
-  }, [initialData])
+  }, [initialData, currentId])
 
   useEffect(() => {
     if (state?.success && state?.content) {
@@ -96,26 +113,24 @@ export default function EditorClient({ initialData }: { initialData: any }) {
       <div className="fixed top-[-15%] right-[-10%] w-[50vw] h-[50vw] lens-flare pointer-events-none z-0 opacity-40"></div>
 
       {/* LEFT SIDE: Sidebar */}
-      <div className="w-full md:w-[400px] lg:w-[480px] border-b md:border-b-0 md:border-r border-white/5 bg-black/50 backdrop-blur-3xl p-8 md:p-12 flex flex-col h-auto md:h-full md:overflow-y-auto z-10 scrollbar-hide shrink-0">
-        <div className="mb-12 md:mb-20 flex items-start gap-10">
-          <Link href="/dashboard" className="group rounded-none p-4 border border-white/10 hover:border-white transition-all bg-white/[0.02]">
+      <div className="w-full md:w-[360px] lg:w-[420px] border-b md:border-b-0 md:border-r border-white/5 bg-black/50 backdrop-blur-3xl p-6 md:p-8 flex flex-col h-auto md:h-full md:overflow-y-auto z-10 scrollbar-hide shrink-0">
+        <div className="mb-6 md:mb-8 flex items-center gap-6">
+          <Link href="/dashboard" className="group rounded-none p-3 border border-white/10 hover:border-white transition-all bg-white/[0.02]">
             <ArrowLeft className="h-4 w-4 text-white/70 group-hover:text-white transition-colors" />
           </Link>
-          <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl font-display font-semibold tracking-[0.1em] uppercase text-gradient leading-none">Editor</h1>
-            <div className="flex items-center gap-4">
-                <Link href="/planner" className="group px-4 py-1.5 rounded-none border border-white/10 bg-white/[0.02] text-white/80 text-[9px] font-black uppercase tracking-[0.4em] hover:border-white hover:text-white transition-all flex items-center gap-2">
-                    Planner <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                </Link>
-            </div>
+          <div className="flex-1 flex items-center justify-between">
+            <h1 className="text-2xl md:text-3xl font-display font-semibold tracking-[0.1em] uppercase text-gradient leading-none">Editor</h1>
+             <Link href="/planner" className="group px-3 py-1 rounded-none border border-white/10 bg-white/[0.02] text-white/80 text-[8px] font-black uppercase tracking-[0.4em] hover:border-white hover:text-white transition-all flex items-center gap-2">
+                Planner <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
 
-        <form action={dispatch} className="flex-1 flex flex-col gap-10 md:gap-12">
+        <form action={dispatch} className="flex-1 flex flex-col gap-6 md:gap-6">
             <input type="hidden" name="id" value={currentId} />
             
-          <div className="space-y-8 md:space-y-10">
-            <div className="space-y-4">
+          <div className="space-y-6 md:space-y-6">
+            <div className="space-y-2">
               <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Social Platform</label>
               <div className="relative group">
                   <select
@@ -136,30 +151,54 @@ export default function EditorClient({ initialData }: { initialData: any }) {
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Topic</label>
-              <input
-                name="topic"
-                required
-                defaultValue={initialData?.title || ''}
-                placeholder="What should the script be about?"
-                className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
-              />
+              <div className="relative group">
+                <input
+                  name="topic"
+                  required
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder="What should the script be about?"
+                  className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
+                />
+                {topic && (
+                    <button 
+                        type="button"
+                        onClick={() => setTopic('')}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors p-2"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Target Audience</label>
-              <input
-                name="audience"
-                required
-                defaultValue={initialData?.audience || ''}
-                placeholder="Who are you writing this for?"
-                className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
-              />
+               <div className="relative group">
+                  <input
+                    name="audience"
+                    required
+                    value={audience}
+                    onChange={(e) => setAudience(e.target.value)}
+                    placeholder="Who are you writing this for?"
+                    className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
+                  />
+                   {audience && (
+                      <button 
+                          type="button"
+                          onClick={() => setAudience('')}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors p-2"
+                      >
+                          <X className="w-4 h-4" />
+                      </button>
+                  )}
+               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 md:gap-8">
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Tone</label>
                  <div className="relative group">
                     <select
@@ -180,7 +219,7 @@ export default function EditorClient({ initialData }: { initialData: any }) {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Language</label>
                  <div className="relative group">
                     <select
@@ -205,6 +244,47 @@ export default function EditorClient({ initialData }: { initialData: any }) {
             </div>
           </div>
 
+            <div className="grid grid-cols-2 gap-4 md:gap-8">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Word Count</label>
+                 <div className="relative group">
+                    <input
+                      name="wordCount"
+                      type="number"
+                      value={wordCount}
+                      onChange={(e) => setWordCount(e.target.value)}
+                      placeholder="e.g. 300"
+                      className="flex h-16 w-full rounded-none border border-white/10 bg-white/[0.01] px-6 py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white focus:outline-none focus:border-white/40 transition-all placeholder:text-white/10"
+                    />
+                     {wordCount && (
+                      <button 
+                          type="button"
+                          onClick={() => setWordCount('')}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors p-2"
+                      >
+                          <X className="w-4 h-4" />
+                      </button>
+                  )}
+                </div>
+              </div>
+
+               <div className="space-y-2">
+                <label className="text-[10px] font-black text-white/60 uppercase tracking-[0.6em] px-1">Visuals</label>
+                <div className="flex h-16 w-full items-center rounded-none border border-white/10 bg-white/[0.01] px-6 transition-all hover:bg-white/[0.03]">
+                   <label className="flex items-center gap-4 cursor-pointer w-full h-full">
+                      <input 
+                        type="checkbox" 
+                        name="includeVisuals" 
+                        defaultChecked={initialData?.includeVisuals || false}
+                        className="w-4 h-4 rounded-none border-white/20 bg-black checked:bg-white checked:text-black focus:ring-0 focus:ring-offset-0 transition-all"
+                      />
+                      <span className="text-[11px] font-black text-white/80 uppercase tracking-[0.2em] select-none">Add Image Prompts</span>
+                   </label>
+                </div>
+              </div>
+            </div>
+
+
             <div className="mt-8 md:mt-auto pt-4 md:pt-12 pb-8 md:pb-0">
                 <SubmitButton />
                 {state?.error && (
@@ -214,8 +294,8 @@ export default function EditorClient({ initialData }: { initialData: any }) {
         </form>
         
         {/* Logo */}
-        <div className="hidden md:flex mt-12 opacity-20 hover:opacity-100 transition-opacity">
-            <div className="w-10 h-10 border border-white/40 flex items-center justify-center font-display font-bold text-lg text-white">S</div>
+        <div className="hidden md:flex mt-8 opacity-20 hover:opacity-100 transition-opacity">
+            <div className="w-8 h-8 border border-white/40 flex items-center justify-center font-display font-bold text-base text-white">S</div>
         </div>
       </div>
 

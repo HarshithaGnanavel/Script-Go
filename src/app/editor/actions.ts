@@ -35,6 +35,8 @@ export async function generateScript(prevState: any, formData: FormData) {
   const length = formData.get('length') as string
   const existingId = formData.get('id') as string
   const targetAudience = formData.get('audience') as string
+  const wordCount = formData.get('wordCount') as string
+  const includeVisuals = formData.get('includeVisuals') === 'on'
 
   if (!topic || !platform || !tone) {
     return { error: 'Please fill in all fields', success: false, content: '', id: '' }
@@ -46,52 +48,74 @@ export async function generateScript(prevState: any, formData: FormData) {
   
   ### TONE & STYLE GUIDELINES (CRITICAL) 
   1. **No Textbook Language:** Never use formal, written-style language. Use conversational, spoken dialect. 
-     - If Language is **Tanglish**: Write in Tamil (using English script) mixed with English words, as spoken colloquially in sunny Chennai.
-     - If Language is **Hinglish**: Write in Hindi (using English script) mixed with English words, as spoken colloquially in Mumbai/Delhi.
-  2. **No Fluff:** Do not use words like "In today's digital world". Start immediately with value. 
-  3. **No Meta-Labels:** Do not output headers like "Hook:", "Body:". Just write the content directly.
+  3. **Language Rules (STRICT):**
+     - If Language is **Tamil**: MUST use pure Tamil script (e.g., "கல்லூரி மாணவர்கள்..."). **ABSOLUTELY NO ENGLISH WORDS OR SCRIPT.** Translate everything including technical terms if possible, or transliterate phonetically effectively.
+     - If Language is **Hindi**: MUST use pure Hindi script. **ABSOLUTELY NO ENGLISH WORDS OR SCRIPT.** 
+     - If Language is **Tanglish**: Use Tamil words in English script mixed with English words (e.g., "Online classes la students focus romba easy ah distract aagum...").
+     - If Language is **Hinglish**: Use Hindi words in English script mixed with English words (e.g., "College students ke liye daily expenses manage karna kaafi difficult hota hai...").
+  4. **No Fluff:** Do not use words like "In today's digital world". Start immediately with value. 
+  5. **No Meta-Labels:** Do not output headers like "Hook:", "Body:". Just write the content directly.
   `;
 
   let aiPrompt = ''
+  let specialInstructions = ''
+
+  if (includeVisuals) {
+    specialInstructions += `\n\n### VISUALS INSTRUCTION
+    - Insert [VISUAL: description] markers in the script where an image or visual would be suitable to enhance the content.
+    - The description should be a prompt suitable for an image generator.`
+  }
+
+  if (wordCount) {
+    specialInstructions += `\n\n### LENGTH CONSTRAINT (CRITICAL)
+    - The generated script MUST be STICTLY around ${wordCount} words. Do not deviate significantly.`
+  }
+
   if (platform === 'LinkedIn') {
     aiPrompt = `### INPUT DATA 
      - **Topic:** ${topic} 
      - **Target Audience:** ${targetAudience} 
      - **Platform:** LinkedIn Post 
+     - **Language:** ${language}
      
      ### PLATFORM SPECIFIC RULES (LINKEDIN POST)
      - Structure: 1. Hook, 2. Story (Broetry style), 3. Bullet Lesson, 4. Question.
      - Tone: ${tone}, Professional but personal. No emojis in first 2 lines.
+     ${specialInstructions}
 
      ### GENERATE CONTENT NOW 
-     Write the content for ${topic} focusing on ${targetAudience}.`
+     Write the content for ${topic} focusing on ${targetAudience} in ${language}.`
 
   } else if (platform === 'Instagram') {
     aiPrompt = `### INPUT DATA 
      - **Topic:** ${topic} 
      - **Target Audience:** ${targetAudience} 
      - **Platform:** Instagram Reels
+     - **Language:** ${language}
 
      ### PLATFORM SPECIFIC RULES (INSTAGRAM REELS)
      - Structure: 1. Visual Hook, 2. Audio Hook, 3. The Meat (3 points), 4. CTA.
      - Format: Vertical video script format. 
      - Add 15-20 viral hashtags at the end.
+     ${specialInstructions}
 
      ### GENERATE CONTENT NOW 
-     Write the content for ${topic} focusing on ${targetAudience}.`
+     Write the content for ${topic} focusing on ${targetAudience} in ${language}.`
 
   } else {
     aiPrompt = `### INPUT DATA 
      - **Topic:** ${topic} 
      - **Target Audience:** ${targetAudience} 
      - **Platform:** YouTube Video
+     - **Language:** ${language}
       
      ### PLATFORM SPECIFIC RULES (YOUTUBE VIDEO)
      - Structure: 1. Teaser, 2. Intro, 3. Step-by-step deep dive, 4. Conclusion.
      - Tone: ${tone}, Educational and authoritative.
+     ${specialInstructions}
 
      ### GENERATE CONTENT NOW 
-     Write the content for ${topic} focusing on ${targetAudience}.`
+     Write the content for ${topic} focusing on ${targetAudience} in ${language}.`
   }
 
   try {
